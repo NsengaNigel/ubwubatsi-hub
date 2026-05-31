@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - Ubwubatsi Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-container": "#783603",
+            "inverse-on-surface": "#f8efea",
+            "tertiary": "#665a4f",
+            "secondary-fixed": "#ffdbc9",
+            "surface-container": "#f5ece7",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#50453a",
+            "surface-container-low": "#fbf2ed",
+            "error": "#ba1a1a",
+            "background": "#fff8f5",
+            "inverse-primary": "#ffb693",
+            "on-primary-container": "#fffbff",
+            "tertiary-fixed-dim": "#d4c4b6",
+            "on-tertiary-container": "#fffbff",
+            "surface-container-high": "#efe6e2",
+            "surface-container-highest": "#e9e1dc",
+            "primary-fixed": "#ffdbcc",
+            "outline": "#897268",
+            "on-background": "#1e1b18",
+            "outline-variant": "#dcc1b5",
+            "secondary-container": "#ffa26a",
+            "on-primary-fixed-variant": "#7a3000",
+            "secondary-fixed-dim": "#ffb68c",
+            "on-error-container": "#93000a",
+            "surface": "#fff8f5",
+            "surface-container-lowest": "#ffffff",
+            "inverse-surface": "#34302c",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "surface-variant": "#e9e1dc",
+            "primary-container": "#b95925",
+            "on-surface": "#1e1b18",
+            "tertiary-container": "#7f7266",
+            "surface-bright": "#fff8f5",
+            "on-surface-variant": "#56433a",
+            "on-error": "#ffffff",
+            "surface-dim": "#e1d8d4",
+            "primary-fixed-dim": "#ffb693",
+            "on-secondary-fixed-variant": "#753401",
+            "on-secondary-fixed": "#321200",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#231a11",
+            "secondary": "#934b19",
+            "primary": "#99420d",
+            "surface-tint": "#9c440f",
+            "tertiary-fixed": "#f1dfd1",
+            "on-primary-fixed": "#351000"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "stack-md": "16px",
+            "unit": "8px",
+            "gutter": "24px",
+            "margin-desktop": "40px",
+            "margin-mobile": "16px",
+            "stack-sm": "8px",
+            "stack-lg": "32px",
+            "container-max-width": "1280px"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-lg": ["Hanken Grotesk"],
+            "headline-lg-mobile": ["Hanken Grotesk"],
+            "body-sm": ["Inter"],
+            "display-lg": ["Hanken Grotesk"],
+            "body-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-md": ["Hanken Grotesk"]
+          },
+          "fontSize": {
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+            "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+            "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+          }
+        }
+      }
+    }
+</script>
+<style>
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md flex min-h-screen">
+<!-- SideNavBar -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-inverse-surface dark:bg-surface-container-lowest flex-col py-stack-lg z-50">
+<div class="px-6 mb-8 flex flex-col gap-2">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-variant border-2 border-outline-variant relative">
+<img alt="Professional User Profile" class="object-cover w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHD9OTaBLAX96HxctefOXe9r8BnbN_y-dOc1YdhFKbmCuuswebKcJNjdZ0PNKTaGkSTJv_LMX0wFihrapwrgiD5ibvca5A0LQ_DtXbU0PExyksg7TYNB1UpchQPcFRg7hp2IcNC9v2pRMjxwDqfJ-Ev_SdY40dbd-xZiq-I4Ug9GyaBqxPvE6a2V1f3BjCrS3NgAcv68_IUDt1kEGf_kEXRrGxf_pVFewQtCEHiipY6Sd8W9tUSbVNDqbKp88L5Kx3EBDFMjFCjY54"/>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile text-on-primary-container">Jean Bosco</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-primary">Certified Architect</p>
+</div>
+<div class="flex-grow flex flex-col gap-2">
+<a class="flex items-center gap-4 text-secondary-container border-l-4 border-secondary-container bg-surface-variant/10 px-6 py-4 font-label-md text-label-md hover:bg-surface-variant/20 hover:text-white transition-all active:translate-x-1 transition-transform" href="dashboard-pro.html">
+<span class="material-symbols-outlined fill">dashboard</span>
+Dashboard
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-6 py-4 font-label-md text-label-md hover:bg-surface-variant/20 hover:text-white transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">architecture</span>
+Active Projects
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-6 py-4 font-label-md text-label-md hover:bg-surface-variant/20 hover:text-white transition-all active:translate-x-1 transition-transform" href="profile.html">
+<span class="material-symbols-outlined">import_contacts</span>
+My Portfolio
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-6 py-4 font-label-md text-label-md hover:bg-surface-variant/20 hover:text-white transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">chat</span>
+Messages
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-6 py-4 font-label-md text-label-md hover:bg-surface-variant/20 hover:text-white transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">verified</span>
+Certifications
+</a>
+</div>
+<div class="px-6 mt-auto">
+<a class="w-full block text-center bg-primary text-on-primary py-3 px-4 rounded font-label-md text-label-md hover:bg-surface-tint transition-colors mb-6" href="post-project.html">
+Post a Project
+</a>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 font-label-md text-label-md hover:bg-surface-variant/20 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+Settings
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 font-label-md text-label-md hover:bg-surface-variant/20 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+Support
+</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 flex flex-col w-full min-h-screen relative">
+<!-- Top App Bar -->
+<header class="h-20 flex justify-between items-center px-margin-desktop bg-surface z-40 border-b border-outline-variant sticky top-0">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">Ubwubatsi Hub</h1>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="hidden md:flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface">Jean Bosco</span>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlCucDtsF4MLozMH35pqUg_P81W1x-OFpxHHf8iucy0hD08fOx0BmZutTXI5pwAp0mFuwnxdVw5SHQEgAN9NMYXAs4Vo5hXPi907ILIlVsB68p4DiyOTu_7y6yYuZwfxvpDHj8VGAEMWXgDivzd6JM04KkkiHL2ZWOaqr758yUwHAQZppTOSodSh3WsOi80XyO6wwaJTuk3OvP7HXBWFepmNhVRZWZ8RK74nTH2N7wChcDALQUvbejTrrw1bNg6EvND9p35FXjaP2P"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-margin-desktop max-w-container-max-width mx-auto w-full flex flex-col gap-12">
+<!-- Welcome Header -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-background flex items-center gap-3">
+Welcome back, Jean <span class="material-symbols-outlined fill text-primary text-[32px]" title="Verified Professional">verified</span>
+</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Here's what is happening with your projects today.</p>
+</div>
+<div class="flex gap-4">
+<button class="border border-outline text-on-surface py-3 px-6 rounded font-label-md text-label-md hover:border-primary hover:text-primary transition-colors">
+View Analytics
+</button>
+</div>
+</section>
+<!-- Available Projects -->
+<section class="flex flex-col gap-6">
+<div class="flex justify-between items-end border-b border-outline-variant pb-2">
+<h3 class="font-headline-lg text-headline-lg text-on-background">Available Projects</h3>
+<a class="font-label-md text-label-md text-primary hover:underline" href="#">View All</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Project Card 1 -->
+<article class="bg-surface border border-outline-variant rounded-xl p-6 flex flex-col gap-4 hover:shadow-[0_4px_20px_rgba(147,75,25,0.1)] transition-shadow">
+<div class="flex justify-between items-start">
+<span class="bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full">Commercial</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Posted 2h ago</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-1">Kigali Tech Park Office Build</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Looking for a lead architect to design a modern, eco-friendly 4-story office building in the new tech zone.</p>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-auto pt-4 border-t border-outline-variant/50">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Location</p>
+<p class="font-body-md text-body-md text-on-surface font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> Kigali</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Est. Budget</p>
+<p class="font-body-md text-body-md text-on-surface font-medium">150M - 200M RWF</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded font-label-md text-label-md hover:bg-surface-tint transition-colors mt-2">Express Interest</button>
+</article>
+<!-- Project Card 2 -->
+<article class="bg-surface border border-outline-variant rounded-xl p-6 flex flex-col gap-4 hover:shadow-[0_4px_20px_rgba(147,75,25,0.1)] transition-shadow">
+<div class="flex justify-between items-start">
+<span class="bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full">Residential</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Posted 5h ago</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-1">Luxury Villa Extension</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Seeking architectural plans and structural engineering for a major extension to an existing hillside property.</p>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-auto pt-4 border-t border-outline-variant/50">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Location</p>
+<p class="font-body-md text-body-md text-on-surface font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> Rubavu</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Est. Budget</p>
+<p class="font-body-md text-body-md text-on-surface font-medium">40M - 60M RWF</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded font-label-md text-label-md hover:bg-surface-tint transition-colors mt-2">Express Interest</button>
+</article>
+<!-- Project Card 3 -->
+<article class="bg-surface border border-outline-variant rounded-xl p-6 flex flex-col gap-4 hover:shadow-[0_4px_20px_rgba(147,75,25,0.1)] transition-shadow">
+<div class="flex justify-between items-start">
+<span class="bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full">Public Works</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Posted 1d ago</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-1">Community Health Clinic</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">Design and structural planning for a new rural community health clinic. Focus on sustainable local materials.</p>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-auto pt-4 border-t border-outline-variant/50">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Location</p>
+<p class="font-body-md text-body-md text-on-surface font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">location_on</span> Musanze</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Est. Budget</p>
+<p class="font-body-md text-body-md text-on-surface font-medium">Open to Bids</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded font-label-md text-label-md hover:bg-surface-tint transition-colors mt-2">Express Interest</button>
+</article>
+</div>
+</section>
+<!-- My Active Projects -->
+<section class="flex flex-col gap-6">
+<div class="flex justify-between items-end border-b border-outline-variant pb-2">
+<h3 class="font-headline-lg text-headline-lg text-on-background">My Active Projects</h3>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Active Project Item 1 -->
+<div class="bg-surface border border-outline-variant rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-headline-md text-headline-md-mobile md:text-headline-md text-on-surface">Nyarutarama Residence</h4>
+<span class="bg-[#e1efd8] text-[#3b6623] font-label-sm text-label-sm px-2 py-0.5 rounded">In Progress</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Phase: Foundation Pouring • Client: M. Kamari</p>
+</div>
+<div class="w-full md:w-1/3 flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Timeline</span>
+<span>45%</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<div class="w-full md:w-auto flex justify-end gap-2 mt-2 md:mt-0">
+<button class="border border-outline text-on-surface py-2 px-4 rounded font-label-md text-label-md hover:border-primary hover:text-primary transition-colors">Update</button>
+</div>
+</div>
+<!-- Active Project Item 2 -->
+<div class="bg-surface border border-outline-variant rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h4 class="font-headline-md text-headline-md-mobile md:text-headline-md text-on-surface">Kiyovu Boutique Hotel</h4>
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded">Planning</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Phase: Blueprint Finalization • Client: Heritage Group</p>
+</div>
+<div class="w-full md:w-1/3 flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Timeline</span>
+<span>15%</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 15%"></div>
+</div>
+</div>
+<div class="w-full md:w-auto flex justify-end gap-2 mt-2 md:mt-0">
+<button class="border border-outline text-on-surface py-2 px-4 rounded font-label-md text-label-md hover:border-primary hover:text-primary transition-colors">Update</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body>
+</html>

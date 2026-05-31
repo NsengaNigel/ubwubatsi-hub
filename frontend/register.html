@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register - Ubwubatsi Hub</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-container": "#783603",
+            "inverse-on-surface": "#f8efea",
+            "tertiary": "#665a4f",
+            "secondary-fixed": "#ffdbc9",
+            "surface-container": "#f5ece7",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#50453a",
+            "surface-container-low": "#fbf2ed",
+            "error": "#ba1a1a",
+            "background": "#fff8f5",
+            "inverse-primary": "#ffb693",
+            "on-primary-container": "#fffbff",
+            "tertiary-fixed-dim": "#d4c4b6",
+            "on-tertiary-container": "#fffbff",
+            "surface-container-high": "#efe6e2",
+            "surface-container-highest": "#e9e1dc",
+            "primary-fixed": "#ffdbcc",
+            "outline": "#897268",
+            "on-background": "#1e1b18",
+            "outline-variant": "#dcc1b5",
+            "secondary-container": "#ffa26a",
+            "on-primary-fixed-variant": "#7a3000",
+            "secondary-fixed-dim": "#ffb68c",
+            "on-error-container": "#93000a",
+            "surface": "#fff8f5",
+            "surface-container-lowest": "#ffffff",
+            "inverse-surface": "#34302c",
+            "error-container": "#ffdad6",
+            "on-primary": "#ffffff",
+            "surface-variant": "#e9e1dc",
+            "primary-container": "#b95925",
+            "on-surface": "#1e1b18",
+            "tertiary-container": "#7f7266",
+            "surface-bright": "#fff8f5",
+            "on-surface-variant": "#56433a",
+            "on-error": "#ffffff",
+            "surface-dim": "#e1d8d4",
+            "primary-fixed-dim": "#ffb693",
+            "on-secondary-fixed-variant": "#753401",
+            "on-secondary-fixed": "#321200",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#231a11",
+            "secondary": "#934b19",
+            "primary": "#99420d",
+            "surface-tint": "#9c440f",
+            "tertiary-fixed": "#f1dfd1",
+            "on-primary-fixed": "#351000"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "stack-md": "16px",
+            "unit": "8px",
+            "gutter": "24px",
+            "margin-desktop": "40px",
+            "margin-mobile": "16px",
+            "stack-sm": "8px",
+            "stack-lg": "32px",
+            "container-max-width": "1280px"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-lg": ["Hanken Grotesk"],
+            "headline-lg-mobile": ["Hanken Grotesk"],
+            "body-sm": ["Inter"],
+            "display-lg": ["Hanken Grotesk"],
+            "body-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-md": ["Hanken Grotesk"]
+          },
+          "fontSize": {
+            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+            "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+            "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+          }
+        }
+      }
+    }
+</script>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop font-body-md text-body-md text-on-surface antialiased">
+<!-- Main Card Container -->
+<main class="w-full max-w-md bg-surface border border-outline-variant rounded-xl p-stack-lg shadow-[0_4px_24px_rgba(153,66,13,0.02)]">
+<!-- Header -->
+<header class="text-center mb-stack-lg">
+<a class="font-headline-md text-headline-md text-primary mb-2 block" href="index.html">Ubwubatsi Hub</a>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Create an Account</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Join Rwanda's premier network for structural integrity and design.</p>
+</header>
+<!-- Role Selector Toggle -->
+<div class="flex bg-surface-container-high border border-outline-variant rounded-full p-1 mb-stack-lg relative w-full overflow-hidden">
+<div class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-primary rounded-full transition-transform duration-300 ease-in-out shadow-sm" id="toggle-indicator"></div>
+<button class="flex-1 py-2 text-center rounded-full font-label-md text-label-md text-on-primary relative z-10 transition-colors focus:outline-none" id="btn-client" onclick="selectRole('client')" type="button">
+Client
+</button>
+<button class="flex-1 py-2 text-center rounded-full font-label-md text-label-md text-on-surface-variant relative z-10 transition-colors focus:outline-none hover:text-on-surface" id="btn-pro" onclick="selectRole('professional')" type="button">
+Professional
+</button>
+</div>
+<!-- Registration Form -->
+<form action="#" class="flex flex-col gap-stack-md" method="POST">
+<!-- Full Name -->
+<div class="flex flex-col">
+<label class="font-label-sm text-label-sm text-on-surface mb-1" for="fullName">Full Name</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" id="fullName" name="fullName" placeholder="Enter your full name" required type="text"/>
+</div>
+<!-- Email -->
+<div class="flex flex-col">
+<label class="font-label-sm text-label-sm text-on-surface mb-1" for="email">Email Address</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" id="email" name="email" placeholder="name@example.com" required type="email"/>
+</div>
+<!-- Phone Number -->
+<div class="flex flex-col">
+<label class="font-label-sm text-label-sm text-on-surface mb-1" for="phone">Phone Number</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" id="phone" name="phone" placeholder="+250 7XX XXX XXX" required type="tel"/>
+</div>
+<!-- Dynamic Professional Field -->
+<div class="flex flex-col hidden overflow-hidden transition-all duration-300" id="professional-fields">
+<label class="font-label-sm text-label-sm text-on-surface mb-1" for="regNumber">Registration Number (RIA or Engineers Rwanda)</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" id="regNumber" name="regNumber" placeholder="e.g. RIA/XXXX/2024" type="text"/>
+</div>
+<!-- Password -->
+<div class="flex flex-col">
+<label class="font-label-sm text-label-sm text-on-surface mb-1" for="password">Password</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline" id="password" name="password" placeholder="Create a strong password" required type="password"/>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-lg font-label-md text-label-md text-center hover:bg-surface-tint transition-colors mt-stack-sm flex items-center justify-center gap-2" type="submit">
+Register
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Link -->
+<div class="mt-stack-lg text-center border-t border-outline-variant pt-stack-md">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+Already have an account?
+<a class="font-label-md text-label-md text-primary underline hover:text-secondary transition-colors" href="login.html">Login</a>
+</p>
+</div>
+</main>
+<script>
+    function selectRole(role) {
+        const btnClient = document.getElementById('btn-client');
+        const btnPro = document.getElementById('btn-pro');
+        const indicator = document.getElementById('toggle-indicator');
+        const proFields = document.getElementById('professional-fields');
+        const regInput = document.getElementById('regNumber');
+
+        if (role === 'client') {
+            indicator.style.transform = 'translateX(0)';
+            btnClient.classList.replace('text-on-surface-variant', 'text-on-primary');
+            btnClient.classList.remove('hover:text-on-surface');
+            btnPro.classList.replace('text-on-primary', 'text-on-surface-variant');
+            btnPro.classList.add('hover:text-on-surface');
+            proFields.classList.add('hidden');
+            regInput.removeAttribute('required');
+            regInput.value = '';
+        } else {
+            indicator.style.transform = 'translateX(100%)';
+            btnPro.classList.replace('text-on-surface-variant', 'text-on-primary');
+            btnPro.classList.remove('hover:text-on-surface');
+            btnClient.classList.replace('text-on-primary', 'text-on-surface-variant');
+            btnClient.classList.add('hover:text-on-surface');
+            proFields.classList.remove('hidden');
+            regInput.setAttribute('required', 'true');
+        }
+    }
+</script>
+</body>
+</html>
