@@ -194,5 +194,61 @@ Already have an account?
         }
     }
 </script>
+<script>
+  // Track current role alongside the existing selectRole toggle
+  let currentRole = 'client';
+  document.getElementById('btn-client').addEventListener('click', () => { currentRole = 'client'; });
+  document.getElementById('btn-pro').addEventListener('click', () => { currentRole = 'professional'; });
+
+  const registerForm = document.querySelector('form');
+  const submitBtn = registerForm.querySelector('button[type="submit"]');
+  const submitBtnHTML = submitBtn.innerHTML;
+
+  // Error message element injected above the submit button
+  const errorMsg = document.createElement('p');
+  errorMsg.style.cssText = 'color:#ba1a1a;font-size:14px;line-height:20px;margin-bottom:8px;display:none;';
+  submitBtn.parentNode.insertBefore(errorMsg, submitBtn);
+
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+    const registrationNumber = document.getElementById('regNumber').value.trim();
+
+    errorMsg.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Registering…';
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName, email, phone, password,
+          role: currentRole,
+          registrationNumber: currentRole === 'professional' ? registrationNumber : undefined
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || 'Registration failed. Please try again.');
+
+      localStorage.setItem('ubwubatsi_token', data.token);
+      localStorage.setItem('ubwubatsi_user', JSON.stringify(data.user));
+
+      window.location.href = data.user.role === 'professional' ? 'dashboard-pro.html' : 'client-dashboard.html';
+
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = submitBtnHTML;
+    }
+  });
+</script>
 </body>
 </html>

@@ -328,5 +328,31 @@ View Analytics
 </section>
 </div>
 </main>
+<script>
+  const stored = localStorage.getItem('ubwubatsi_user');
+  if (!stored) {
+    window.location.href = 'login.html';
+  } else {
+    const user = JSON.parse(stored);
+    const firstName = user.fullName.split(' ')[0];
+
+    // Sidebar name
+    const sidebarName = document.querySelector('nav h2');
+    if (sidebarName) sidebarName.textContent = user.fullName;
+
+    // Header name (top bar)
+    const headerName = document.querySelector('header .hidden.md\\:flex span');
+    if (headerName) headerName.textContent = user.fullName;
+
+    // Welcome heading — update the text node before the verified icon
+    const welcomeHeading = document.querySelector('main h2');
+    if (welcomeHeading) {
+      const textNode = welcomeHeading.firstChild;
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        textNode.textContent = 'Welcome back, ' + firstName + ' ';
+      }
+    }
+  }
+</script>
 </body>
 </html>
