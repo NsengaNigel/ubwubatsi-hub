@@ -8,210 +8,269 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          "colors": {
-            "on-secondary-container": "#783603",
-            "inverse-on-surface": "#f8efea",
-            "tertiary": "#665a4f",
-            "secondary-fixed": "#ffdbc9",
-            "surface-container": "#f5ece7",
-            "on-tertiary": "#ffffff",
-            "on-tertiary-fixed-variant": "#50453a",
-            "surface-container-low": "#fbf2ed",
-            "error": "#ba1a1a",
-            "background": "#fff8f5",
-            "inverse-primary": "#ffb693",
-            "on-primary-container": "#fffbff",
-            "tertiary-fixed-dim": "#d4c4b6",
-            "on-tertiary-container": "#fffbff",
-            "surface-container-high": "#efe6e2",
-            "surface-container-highest": "#e9e1dc",
-            "primary-fixed": "#ffdbcc",
-            "outline": "#897268",
-            "on-background": "#1e1b18",
-            "outline-variant": "#dcc1b5",
-            "secondary-container": "#ffa26a",
-            "on-primary-fixed-variant": "#7a3000",
-            "secondary-fixed-dim": "#ffb68c",
-            "on-error-container": "#93000a",
-            "surface": "#fff8f5",
-            "surface-container-lowest": "#ffffff",
-            "inverse-surface": "#34302c",
-            "error-container": "#ffdad6",
-            "on-primary": "#ffffff",
-            "surface-variant": "#e9e1dc",
-            "primary-container": "#b95925",
-            "on-surface": "#1e1b18",
-            "tertiary-container": "#7f7266",
-            "surface-bright": "#fff8f5",
-            "on-surface-variant": "#56433a",
-            "on-error": "#ffffff",
-            "surface-dim": "#e1d8d4",
-            "primary-fixed-dim": "#ffb693",
-            "on-secondary-fixed-variant": "#753401",
-            "on-secondary-fixed": "#321200",
-            "on-secondary": "#ffffff",
-            "on-tertiary-fixed": "#231a11",
-            "secondary": "#934b19",
-            "primary": "#99420d",
-            "surface-tint": "#9c440f",
-            "tertiary-fixed": "#f1dfd1",
-            "on-primary-fixed": "#351000"
-          },
-          "borderRadius": {
-            "DEFAULT": "0.125rem",
-            "lg": "0.25rem",
-            "xl": "0.5rem",
-            "full": "0.75rem"
-          },
-          "spacing": {
-            "stack-md": "16px",
-            "unit": "8px",
-            "gutter": "24px",
-            "margin-desktop": "40px",
-            "margin-mobile": "16px",
-            "stack-sm": "8px",
-            "stack-lg": "32px",
-            "container-max-width": "1280px"
-          },
-          "fontFamily": {
-            "body-md": ["Inter"],
-            "label-sm": ["Inter"],
-            "headline-lg": ["Hanken Grotesk"],
-            "headline-lg-mobile": ["Hanken Grotesk"],
-            "body-sm": ["Inter"],
-            "display-lg": ["Hanken Grotesk"],
-            "body-lg": ["Inter"],
-            "label-md": ["Inter"],
-            "headline-md": ["Hanken Grotesk"]
-          },
-          "fontSize": {
-            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-            "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
-            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
-            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
-            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-            "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-            "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
-            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
-          }
-        }
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "on-secondary-container":"#783603","inverse-on-surface":"#f8efea","tertiary":"#665a4f",
+        "secondary-fixed":"#ffdbc9","surface-container":"#f5ece7","on-tertiary":"#ffffff",
+        "on-tertiary-fixed-variant":"#50453a","surface-container-low":"#fbf2ed","error":"#ba1a1a",
+        "background":"#fff8f5","inverse-primary":"#ffb693","on-primary-container":"#fffbff",
+        "tertiary-fixed-dim":"#d4c4b6","on-tertiary-container":"#fffbff",
+        "surface-container-high":"#efe6e2","surface-container-highest":"#e9e1dc",
+        "primary-fixed":"#ffdbcc","outline":"#897268","on-background":"#1e1b18",
+        "outline-variant":"#dcc1b5","secondary-container":"#ffa26a",
+        "on-primary-fixed-variant":"#7a3000","secondary-fixed-dim":"#ffb68c",
+        "on-error-container":"#93000a","surface":"#fff8f5","surface-container-lowest":"#ffffff",
+        "inverse-surface":"#34302c","error-container":"#ffdad6","on-primary":"#ffffff",
+        "surface-variant":"#e9e1dc","primary-container":"#b95925","on-surface":"#1e1b18",
+        "tertiary-container":"#7f7266","surface-bright":"#fff8f5","on-surface-variant":"#56433a",
+        "on-error":"#ffffff","surface-dim":"#e1d8d4","primary-fixed-dim":"#ffb693",
+        "on-secondary-fixed-variant":"#753401","on-secondary-fixed":"#321200",
+        "on-secondary":"#ffffff","on-tertiary-fixed":"#231a11","secondary":"#934b19",
+        "primary":"#99420d","surface-tint":"#9c440f","tertiary-fixed":"#f1dfd1",
+        "on-primary-fixed":"#351000"
+      },
+      borderRadius: { "DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem" },
+      spacing: {
+        "stack-md":"16px","unit":"8px","gutter":"24px","margin-desktop":"40px",
+        "margin-mobile":"16px","stack-sm":"8px","stack-lg":"32px","container-max-width":"1280px"
+      },
+      fontFamily: {
+        "body-md":["Inter"],"label-sm":["Inter"],"headline-lg":["Hanken Grotesk"],
+        "headline-lg-mobile":["Hanken Grotesk"],"body-sm":["Inter"],"display-lg":["Hanken Grotesk"],
+        "body-lg":["Inter"],"label-md":["Inter"],"headline-md":["Hanken Grotesk"]
+      },
+      fontSize: {
+        "body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],
+        "label-sm":["12px",{"lineHeight":"16px","fontWeight":"500"}],
+        "headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"600"}],
+        "headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"600"}],
+        "body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],
+        "display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}],
+        "body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],
+        "label-md":["14px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"600"}],
+        "headline-md":["24px",{"lineHeight":"32px","fontWeight":"600"}]
       }
     }
+  }
+}
 </script>
 <style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-    [data-weight="fill"] {
-      font-variation-settings: 'FILL' 1;
-    }
+  body { background-color: #fff8f5; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.65s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  .du-1 { animation-delay: 0ms; }
+  .du-2 { animation-delay: 100ms; }
+  .du-3 { animation-delay: 200ms; }
+  .du-4 { animation-delay: 300ms; }
+  .du-5 { animation-delay: 380ms; }
+  .du-6 { animation-delay: 460ms; }
+
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* Nav pill register button */
+  .nav-register {
+    display: inline-flex; align-items: center;
+    background: #99420d; color: #ffffff;
+    border-radius: 999px; padding: 8px 20px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.05em;
+    transition: background-color 0.3s cubic-bezier(0.32,0.72,0,1), transform 0.15s;
+  }
+  .nav-register:hover { background-color: #7a3000; }
+  .nav-register:active { transform: scale(0.97); }
+
+  /* Hero CTA buttons */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #99420d; color: #ffffff;
+    border-radius: 999px; padding: 14px 28px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.05em;
+    transition: background-color 0.4s cubic-bezier(0.32,0.72,0,1), transform 0.15s;
+  }
+  .btn-primary:hover { background-color: #7a3000; }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-icon {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+  }
+  .btn-primary:hover .btn-icon { transform: translateX(2px); }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid #dcc1b5; color: #56433a;
+    border-radius: 999px; padding: 13px 28px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.05em;
+    transition: border-color 0.4s cubic-bezier(0.32,0.72,0,1), color 0.4s, transform 0.15s;
+  }
+  .btn-outline:hover { border-color: #99420d; color: #99420d; }
+  .btn-outline:active { transform: scale(0.97); }
+
+  /* Stats panel */
+  .stat-shell {
+    border: 1px solid #dcc1b5;
+    border-radius: 1.25rem;
+    overflow: hidden;
+  }
+  .stat-row {
+    padding: 28px 32px;
+    border-bottom: 1px solid #dcc1b5;
+    transition: background-color 0.3s cubic-bezier(0.32,0.72,0,1);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row:hover { background-color: rgba(153,66,13,0.02); }
+
+  /* Eyebrow */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid rgba(153,66,13,0.25); background: rgba(153,66,13,0.05); color: #99420d;
+    border-radius: 999px; padding: 4px 12px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  /* How it works cards */
+  .step-card {
+    background: #fff8f5;
+    border: 1px solid #dcc1b5;
+    border-radius: 1.25rem;
+    padding: 32px;
+    transition: border-color 0.4s cubic-bezier(0.32,0.72,0,1),
+                box-shadow 0.4s cubic-bezier(0.32,0.72,0,1);
+  }
+  .step-card:hover {
+    border-color: #99420d;
+    box-shadow: 0 8px 32px -8px rgba(153,66,13,0.1);
+  }
+  .step-num {
+    font-size: 48px; line-height: 1; font-weight: 700;
+    font-family: 'Hanken Grotesk', sans-serif;
+    color: rgba(153,66,13,0.15);
+    letter-spacing: -0.02em;
+    user-select: none;
+  }
 </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-on-primary-container antialiased">
-<!-- TopNavBar -->
-<nav class="bg-surface dark:bg-surface-dim w-full top-0 sticky border-b border-outline-variant dark:border-outline z-50">
-<div class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max-width mx-auto">
-<div class="flex items-center gap-gutter">
-<a class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim" href="index.html">Ubwubatsi Hub</a>
-<div class="hidden md:flex items-center gap-stack-md ml-stack-lg">
-<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="browse.html">Find Experts</a>
-<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="post-project.html">Projects</a>
-<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="#">Materials</a>
-<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="index.html#how-it-works">How it Works</a>
-</div>
-</div>
-<div class="flex items-center gap-stack-md">
-<a class="font-label-md text-label-md px-4 py-3 rounded text-on-surface-variant hover:bg-surface-variant/50 transition-colors hidden md:block" href="login.html">Login</a>
-<a class="font-label-md text-label-md px-4 py-3 rounded bg-primary text-on-primary hover:bg-surface-tint transition-colors" href="register.html">Register</a>
-</div>
+<body class="bg-background text-on-background font-body-md">
+
+<!-- Nav -->
+<nav class="bg-surface w-full top-0 sticky border-b border-outline-variant z-50">
+<div class="flex justify-between items-center h-20 px-margin-mobile md:px-margin-desktop max-w-container-max-width mx-auto">
+  <a class="font-headline-md text-headline-md font-bold text-primary" href="index.html">Ubwubatsi Hub</a>
+  <div class="hidden md:flex items-center gap-6">
+    <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="browse.html">Find Experts</a>
+    <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="post-project.html">Projects</a>
+
+    <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#how-it-works">How it Works</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <a class="hidden md:block font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="login.html">Login</a>
+    <a class="nav-register" href="register.html">Register</a>
+  </div>
 </div>
 </nav>
-<!-- Hero Section -->
-<section class="relative pt-24 pb-32 overflow-hidden px-margin-mobile md:px-margin-desktop max-w-container-max-width mx-auto">
+
+<!-- Hero -->
+<section class="max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop pt-20 pb-24 md:pt-28 md:pb-32">
 <div class="grid md:grid-cols-12 gap-gutter items-center">
-<div class="md:col-span-7 flex flex-col gap-stack-lg z-10">
-<h1 class="font-display-lg text-display-lg text-on-background">
-    Find Verified <span class="text-primary">Architects &amp; Engineers</span> in Rwanda
-</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
-    Connecting homeowners with Rwanda's top construction professionals. Build your dream home with trusted experts, transparent pricing, and guaranteed quality.
-</p>
-<div class="flex flex-col sm:flex-row gap-stack-md mt-stack-sm">
-<a class="font-label-md text-label-md px-6 py-4 rounded bg-primary text-on-primary hover:bg-surface-tint transition-colors flex items-center justify-center gap-2" href="post-project.html">
-    Post a Project
-    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
-</a>
-<a class="font-label-md text-label-md px-6 py-4 rounded border border-secondary text-secondary hover:bg-secondary/5 transition-colors flex items-center justify-center gap-2" href="browse.html">
-    Find Professionals
-</a>
-</div>
-</div>
-<div class="md:col-span-5 relative mt-stack-lg md:mt-0">
-<div class="border border-outline-variant rounded-xl overflow-hidden divide-y divide-outline-variant">
-<div class="p-8 bg-surface">
-<p class="font-display-lg text-display-lg text-primary leading-none">500+</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Verified architects &amp; engineers on the platform</p>
-</div>
-<div class="p-8 bg-surface-container-low">
-<p class="font-display-lg text-display-lg text-on-background leading-none">200+</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Projects completed across Rwanda</p>
-</div>
-<div class="p-8 bg-surface">
-<p class="font-display-lg text-display-lg text-on-background leading-none">48h</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Average response time from professionals</p>
-</div>
-</div>
-</div>
+
+  <!-- Left: text -->
+  <div class="md:col-span-7 flex flex-col gap-6">
+    <span class="eyebrow fade-up du-1">
+      <span class="material-symbols-outlined" style="font-size:12px; font-variation-settings:'FILL' 1;">verified</span>
+      Verified professionals only
+    </span>
+    <h1 class="font-display-lg text-display-lg text-on-background fade-up du-2" style="letter-spacing:-0.02em; line-height:1.05;">
+      Find Verified<br><span class="text-primary">Architects &amp; Engineers</span><br>in Rwanda
+    </h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant fade-up du-3" style="max-width:44ch;">
+      Connecting homeowners with Rwanda's top construction professionals. Build with trusted experts, transparent pricing, and guaranteed quality.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 fade-up du-4">
+      <a class="btn-primary" href="post-project.html">
+        Post a Project
+        <span class="btn-icon">
+          <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+        </span>
+      </a>
+      <a class="btn-outline" href="browse.html">Find Professionals</a>
+    </div>
+  </div>
+
+  <!-- Right: stats panel -->
+  <div class="md:col-span-5 mt-10 md:mt-0 fade-up du-5">
+    <div class="stat-shell">
+      <div class="stat-row" style="background:#fff8f5;">
+        <p class="font-display-lg text-display-lg text-primary leading-none" style="letter-spacing:-0.02em;">500+</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Verified architects &amp; engineers registered on the platform</p>
+      </div>
+      <div class="stat-row" style="background:rgba(245,236,231,0.5);">
+        <p class="font-display-lg text-display-lg text-on-surface leading-none" style="letter-spacing:-0.02em;">200+</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Projects completed across Rwanda</p>
+      </div>
+      <div class="stat-row" style="background:#fff8f5;">
+        <p class="font-display-lg text-display-lg text-on-surface leading-none" style="letter-spacing:-0.02em;">48h</p>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Average response time from professionals</p>
+      </div>
+    </div>
+  </div>
+
 </div>
 </section>
+
 <!-- How it Works -->
-<section class="py-24 bg-surface-container-low px-margin-mobile md:px-margin-desktop" id="how-it-works">
+<section class="bg-surface-container-low py-24 px-margin-mobile md:px-margin-desktop" id="how-it-works">
 <div class="max-w-container-max-width mx-auto">
-<div class="text-center max-w-2xl mx-auto mb-16">
-<h2 class="font-headline-lg text-headline-lg text-on-background mb-4">How Ubwubatsi Hub Works</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">A streamlined process designed to bring transparency and professional rigor to your construction journey.</p>
-</div>
-<div class="grid md:grid-cols-3 gap-gutter">
-<!-- Step 1 -->
-<div class="bg-surface border border-outline-variant rounded-xl p-8 flex flex-col gap-4 hover:border-primary transition-colors duration-200">
-<span class="font-display-lg text-display-lg text-primary/20 leading-none select-none">01</span>
-<h3 class="font-headline-md text-headline-md text-on-background">Post your project</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Describe your vision, budget, and timeline. Our structured forms help define your requirements clearly for the best matches.</p>
-</div>
-<!-- Step 2 -->
-<div class="bg-surface border border-outline-variant rounded-xl p-8 flex flex-col gap-4 hover:border-primary transition-colors duration-200">
-<span class="font-display-lg text-display-lg text-primary/20 leading-none select-none">02</span>
-<h3 class="font-headline-md text-headline-md text-on-background">Get matched</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Receive proposals from verified architects and engineers. Compare portfolios, read reviews, and select the right expert.</p>
-</div>
-<!-- Step 3 -->
-<div class="bg-surface border border-outline-variant rounded-xl p-8 flex flex-col gap-4 hover:border-primary transition-colors duration-200">
-<span class="font-display-lg text-display-lg text-primary/20 leading-none select-none">03</span>
-<h3 class="font-headline-md text-headline-md text-on-background">Build with confidence</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Manage your project through our platform. Secure milestones, track progress, and communicate directly with your team.</p>
-</div>
-</div>
+
+  <div class="mb-14">
+    <span class="eyebrow mb-4">Process</span>
+    <h2 class="font-display-lg text-on-background mt-4" style="font-size:36px; line-height:1.1; letter-spacing:-0.02em; font-weight:700;">How Ubwubatsi Hub works</h2>
+    <p class="font-body-lg text-body-lg text-on-surface-variant mt-3" style="max-width:44ch;">Transparency and professional rigor at every step of your construction journey.</p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-5">
+
+    <div class="step-card">
+      <span class="step-num">01</span>
+      <h3 class="font-headline-md text-headline-md text-on-background mt-5 mb-3">Post your project</h3>
+      <p class="font-body-md text-body-md text-on-surface-variant">Describe your vision, budget, and timeline. Our structured forms help define your requirements clearly for the best matches.</p>
+    </div>
+
+    <div class="step-card">
+      <span class="step-num">02</span>
+      <h3 class="font-headline-md text-headline-md text-on-background mt-5 mb-3">Get matched</h3>
+      <p class="font-body-md text-body-md text-on-surface-variant">Receive proposals from verified architects and engineers. Compare portfolios, read reviews, and select the right expert.</p>
+    </div>
+
+    <div class="step-card">
+      <span class="step-num">03</span>
+      <h3 class="font-headline-md text-headline-md text-on-background mt-5 mb-3">Build with confidence</h3>
+      <p class="font-body-md text-body-md text-on-surface-variant">Manage your project through our platform. Secure milestones, track progress, and communicate directly with your team.</p>
+    </div>
+
+  </div>
 </div>
 </section>
+
 <!-- Footer -->
-<footer class="bg-surface-container-highest dark:bg-surface-container-low w-full py-stack-lg mt-auto border-t border-outline-variant">
-<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max-width mx-auto gap-stack-md md:gap-0">
-<div class="font-headline-md text-headline-md text-primary">Ubwubatsi Hub</div>
-<div class="flex flex-wrap justify-center gap-stack-md md:gap-gutter">
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Contact Support</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Rwandan Institute of Architects</a>
-</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-surface text-center md:text-right">
-    © 2024 Ubwubatsi Hub. Building Rwanda with Integrity.
-</div>
+<footer class="border-t border-outline-variant py-10">
+<div class="max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
+  <span class="font-headline-md text-headline-md text-primary">Ubwubatsi Hub</span>
+  <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+    <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+    <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+    <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Support</a>
+    <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Rwandan Institute of Architects</a>
+  </nav>
+  <span class="font-body-sm text-body-sm text-on-surface-variant">© 2024 Ubwubatsi Hub. Building Rwanda with Integrity.</span>
 </div>
 </footer>
+
 </body>
 </html>
