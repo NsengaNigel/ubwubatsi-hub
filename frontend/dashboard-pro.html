@@ -116,8 +116,8 @@
 <!-- SideNavBar -->
 <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-inverse-surface dark:bg-surface-container-lowest flex-col py-stack-lg z-50">
 <div class="px-6 mb-8 flex flex-col gap-2">
-<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-variant border-2 border-outline-variant relative">
-<img alt="Professional User Profile" class="object-cover w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHD9OTaBLAX96HxctefOXe9r8BnbN_y-dOc1YdhFKbmCuuswebKcJNjdZ0PNKTaGkSTJv_LMX0wFihrapwrgiD5ibvca5A0LQ_DtXbU0PExyksg7TYNB1UpchQPcFRg7hp2IcNC9v2pRMjxwDqfJ-Ev_SdY40dbd-xZiq-I4Ug9GyaBqxPvE6a2V1f3BjCrS3NgAcv68_IUDt1kEGf_kEXRrGxf_pVFewQtCEHiipY6Sd8W9tUSbVNDqbKp88L5Kx3EBDFMjFCjY54"/>
+<div class="w-16 h-16 rounded-full bg-primary/20 border-2 border-primary/30 flex items-center justify-center">
+<span class="font-headline-md text-headline-md text-on-primary-container" id="sidebar-initials">JB</span>
 </div>
 <h2 class="font-headline-lg text-headline-lg-mobile text-on-primary-container">Jean Bosco</h2>
 <p class="font-body-sm text-body-sm text-on-surface-variant dark:text-primary">Certified Architect</p>
@@ -177,8 +177,8 @@ Support
 </button>
 <div class="hidden md:flex items-center gap-2">
 <span class="font-label-md text-label-md text-on-surface">Jean Bosco</span>
-<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden">
-<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlCucDtsF4MLozMH35pqUg_P81W1x-OFpxHHf8iucy0hD08fOx0BmZutTXI5pwAp0mFuwnxdVw5SHQEgAN9NMYXAs4Vo5hXPi907ILIlVsB68p4DiyOTu_7y6yYuZwfxvpDHj8VGAEMWXgDivzd6JM04KkkiHL2ZWOaqr758yUwHAQZppTOSodSh3WsOi80XyO6wwaJTuk3OvP7HXBWFepmNhVRZWZ8RK74nTH2N7wChcDALQUvbejTrrw1bNg6EvND9p35FXjaP2P"/>
+<div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+<span class="font-label-sm text-label-sm text-primary" id="header-initials">JB</span>
 </div>
 </div>
 </div>
@@ -335,6 +335,12 @@ View Analytics
   } else {
     const user = JSON.parse(stored);
     const firstName = user.fullName.split(' ')[0];
+    const parts = user.fullName.trim().split(' ');
+    const initials = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    const sidebarInitials = document.getElementById('sidebar-initials');
+    const headerInitials = document.getElementById('header-initials');
+    if (sidebarInitials) sidebarInitials.textContent = initials;
+    if (headerInitials) headerInitials.textContent = initials;
 
     // Sidebar name
     const sidebarName = document.querySelector('nav h2');

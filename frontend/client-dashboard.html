@@ -124,8 +124,8 @@
 <button class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-variant">
 <span class="material-symbols-outlined">notifications</span>
 </button>
-<button class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-outline-variant hover:border-primary transition-colors">
-<img alt="Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHvxLQZbACkGEJ4pXZJqqKce8aeEFtuJimRwi5Rw2caZniwNhb2miub8SQLM9R6goopWaepiCUP5lrvmLyvFkGvNwFwglv15hzrdHG2rT3mBFQ3rKUhHvOJn2r1j2QpFi2k2w7LW1mC55DogmramoCMH-SXUn7xVHF_uYbRHTd26VPLGG_ExUMXlLpU41cPqK6Cb4wppf_nYDppSM6YUoBGGE5Dm4r2GhObG753RMEJeZTqzD9seUqfo-K6zJQpAKibUpv2KaqgJph"/>
+<button class="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 hover:border-primary transition-colors flex items-center justify-center">
+<span class="font-label-sm text-label-sm text-primary" id="nav-initials">CN</span>
 </button>
 </div>
 </div>
@@ -239,6 +239,10 @@ Explore Directory <span class="material-symbols-outlined text-[20px]">arrow_forw
     const user = JSON.parse(stored);
     const welcome = document.querySelector('h1');
     if (welcome) welcome.textContent = 'Welcome back, ' + user.fullName;
+    const parts = user.fullName.trim().split(' ');
+    const initials = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    const navInitials = document.getElementById('nav-initials');
+    if (navInitials) navInitials.textContent = initials;
   }
 </script>
 </body>
