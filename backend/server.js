@@ -1,5 +1,4 @@
-require('dotenv').config();
-console.log('MONGODB_URI:', process.env.MONGODB_URI);const express = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -16,7 +15,10 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch((err) => console.log('MongoDB connection error:', err));
 
 const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Ubwubatsi Hub API is running' });
