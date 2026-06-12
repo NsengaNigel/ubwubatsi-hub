@@ -2,13 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const PROFESSIONALS = [
-  { id: 1, initials: 'AU', name: 'Aline Uwase', title: 'Principal Architect', rating: '4.9', tags: ['Sustainable Design', 'Commercial'], location: 'Kigali', verified: true, bg: 'rgba(153,66,13,0.04)', color: '#99420d' },
-  { id: 2, initials: 'JB', name: 'Jean Bosco', title: 'Senior Structural Engineer', rating: '4.8', tags: ['Concrete Structures', 'Bridge Design'], location: 'Musanze', verified: true, bg: 'rgba(245,236,231,0.7)', color: '#99420d' },
-  { id: 3, initials: 'MC', name: 'Marie Claire', title: 'Interior Architect', rating: '5.0', tags: ['Residential', 'Custom Furniture'], location: 'Kigali', verified: true, bg: 'rgba(147,75,25,0.05)', color: '#934b19' },
-  { id: 4, initials: 'EN', name: 'Eric Ndayisaba', title: 'Construction Manager', rating: '4.7', tags: ['Site Supervision', 'Cost Estimation'], location: 'Rubavu', verified: false, bg: 'rgba(153,66,13,0.04)', color: '#99420d' },
-];
-
 function getInitials(name) {
   if (!name) return '??';
   const parts = name.trim().split(' ');
@@ -76,9 +69,6 @@ export default function BrowseProfessionals() {
               Rwanda's verified construction professionals — checked credentials, real projects.
             </p>
           </div>
-          <p className="text-sm text-[#56433a] shrink-0 fade-up du-2">
-            Showing <strong className="font-medium text-[#1e1b18]">{PROFESSIONALS.length}</strong> professionals
-          </p>
         </div>
 
         {/* Filter bar */}
@@ -113,56 +103,12 @@ export default function BrowseProfessionals() {
           </button>
         </div>
 
-        {/* Professional grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 py-8">
-          {PROFESSIONALS.map((pro, i) => (
-            <div key={pro.id} className={`browse-card-shell fade-up`} style={{ animationDelay: `${(i + 4) * 70}ms` }}>
-              <div className="browse-card-core">
-                <div className="card-avatar-band" style={{ background: pro.bg }}>
-                  <span className="font-bold" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', color: pro.color }}>{pro.initials}</span>
-                </div>
-                <div className="flex-1 p-5">
-                  <div className="flex justify-between items-start gap-3">
-                    <div>
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <h3 className="text-sm font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }}>{pro.name}</h3>
-                        {pro.verified && (
-                          <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '15px' }} title="Verified">verified</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-[#56433a]">
-                        {pro.title} &nbsp;·&nbsp; <span className="text-[#99420d] font-medium">{pro.rating}</span>
-                      </p>
-                    </div>
-                    <Link to={`/professional/${pro.id}`} className="view-btn">
-                      View
-                      <span className="view-btn-icon">
-                        <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>arrow_forward</span>
-                      </span>
-                    </Link>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {pro.tags.map(tag => (
-                      <span key={tag} className="tag-pill" style={{ background: `rgba(${pro.color === '#934b19' ? '147,75,25' : '153,66,13'},0.07)`, color: pro.color }}>{tag}</span>
-                    ))}
-                  </div>
-                  <p className="flex items-center gap-1 mt-3 text-sm text-[#56433a]">
-                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>location_on</span>{pro.location}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
+        {/* Empty state */}
+        <div className="flex flex-col items-center gap-4 py-20 text-center fade-up du-4">
+          <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '56px' }}>group</span>
+          <p className="text-base text-[#56433a]">No verified professionals yet. Check back soon.</p>
         </div>
 
-        <div className="flex justify-center pb-16">
-          <button className="load-more">
-            Load more professionals
-            <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(30,27,24,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>expand_more</span>
-            </span>
-          </button>
-        </div>
       </main>
 
       <footer className="bg-[#e9e1dc] w-full py-8 border-t border-[#dcc1b5]">

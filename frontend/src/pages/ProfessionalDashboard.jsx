@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -7,17 +9,31 @@ function getInitials(name) {
   return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
 }
 
-const AVAILABLE_PROJECTS = [
-  { id: 1, category: 'Commercial', time: '2h ago', title: 'Kigali Tech Park Office Build', desc: 'Looking for a lead architect to design a modern, eco-friendly 4-story office building in the new tech zone.', location: 'Kigali', budget: '150M – 200M RWF' },
-  { id: 2, category: 'Residential', time: '5h ago', title: 'Luxury Villa Extension', desc: 'Seeking architectural plans and structural engineering for a major extension to an existing hillside property.', location: 'Rubavu', budget: '40M – 60M RWF' },
-  { id: 3, category: 'Public Works', time: '1d ago', title: 'Community Health Clinic', desc: 'Design and structural planning for a new rural community health clinic. Focus on sustainable local materials.', location: 'Musanze', budget: 'Open to Bids' },
-];
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const hours = Math.floor(diff / 3600000);
+  if (hours < 1) return 'Just now';
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
 
 export default function ProfessionalDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const firstName = user?.fullName?.split(' ')[0] || 'Professional';
   const initials = getInitials(user?.fullName || '');
+
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    api.get('/api/projects')
+      .then(res => setProjects(res.data))
+      .catch(() => setError('Could not load projects.'))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="bg-[#fff8f5] text-[#1e1b18] flex min-h-screen">
@@ -32,7 +48,7 @@ export default function ProfessionalDashboard() {
             </div>
             <div>
               <p style={{ color: '#fff8f5', fontSize: '14px', fontWeight: 600, letterSpacing: '0.05em' }}>{user?.fullName || 'Professional'}</p>
-              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '14px' }}>Certified Architect</p>
+              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '14px' }}>Verified Professional</p>
             </div>
           </div>
         </div>
@@ -95,7 +111,6 @@ export default function ProfessionalDashboard() {
           <div className="flex items-center gap-4">
             <button className="relative text-[#56433a] hover:text-[#99420d] transition-colors">
               <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-[#ba1a1a] rounded-full" />
             </button>
             <div className="hidden md:flex items-center gap-2">
               <span className="text-sm font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }}>{user?.fullName || 'Professional'}</span>
@@ -125,35 +140,52 @@ export default function ProfessionalDashboard() {
           <section className="fade-up du-2">
             <div className="flex justify-between items-end border-b border-[#dcc1b5] pb-3 mb-6">
               <h3 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>Available Projects</h3>
-              <Link to="/browse-professionals" className="text-sm font-semibold text-[#99420d] hover:underline" style={{ letterSpacing: '0.05em' }}>View all</Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {AVAILABLE_PROJECTS.map((proj, i) => (
-                <div key={proj.id} className={`pro-card-shell fade-up`} style={{ animationDelay: `${(i + 3) * 80}ms` }}>
-                  <div className="pro-card-core">
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="cat-chip">{proj.category}</span>
-                      <span className="text-sm text-[#56433a]">{proj.time}</span>
-                    </div>
-                    <h4 className="text-[#1e1b18] mb-2" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>{proj.title}</h4>
-                    <p className="text-sm text-[#56433a] mb-5" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{proj.desc}</p>
-                    <div className="grid grid-cols-2 gap-3 mb-5 pt-4 border-t border-[#dcc1b5]/50">
-                      <div>
-                        <p className="text-xs font-medium text-[#56433a] mb-1" style={{ letterSpacing: '0.05em' }}>Location</p>
-                        <p className="text-sm font-medium text-[#1e1b18] flex items-center gap-1">
-                          <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>location_on</span>{proj.location}
-                        </p>
+
+            {loading && (
+              <p className="text-sm text-[#56433a]">Loading projects…</p>
+            )}
+
+            {error && (
+              <p className="text-sm text-[#ba1a1a]">{error}</p>
+            )}
+
+            {!loading && !error && projects.length === 0 && (
+              <div className="flex flex-col items-center gap-3 py-12 text-center">
+                <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '48px' }}>inbox</span>
+                <p className="text-base text-[#56433a]">No projects available yet. Check back soon.</p>
+              </div>
+            )}
+
+            {!loading && !error && projects.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {projects.map((proj, i) => (
+                  <div key={proj._id} className="pro-card-shell fade-up" style={{ animationDelay: `${(i + 3) * 80}ms` }}>
+                    <div className="pro-card-core">
+                      <div className="flex justify-between items-start mb-4">
+                        <span className="cat-chip">{proj.category}</span>
+                        <span className="text-sm text-[#56433a]">{timeAgo(proj.createdAt)}</span>
                       </div>
-                      <div>
-                        <p className="text-xs font-medium text-[#56433a] mb-1" style={{ letterSpacing: '0.05em' }}>Budget</p>
-                        <p className="text-sm font-medium text-[#1e1b18]">{proj.budget}</p>
+                      <h4 className="text-[#1e1b18] mb-2" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>{proj.title}</h4>
+                      <p className="text-sm text-[#56433a] mb-5" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{proj.description}</p>
+                      <div className="grid grid-cols-2 gap-3 mb-5 pt-4 border-t border-[#dcc1b5]/50">
+                        <div>
+                          <p className="text-xs font-medium text-[#56433a] mb-1" style={{ letterSpacing: '0.05em' }}>Location</p>
+                          <p className="text-sm font-medium text-[#1e1b18] flex items-center gap-1">
+                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>location_on</span>{proj.location}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-[#56433a] mb-1" style={{ letterSpacing: '0.05em' }}>Budget</p>
+                          <p className="text-sm font-medium text-[#1e1b18]">{proj.budget}</p>
+                        </div>
                       </div>
+                      <button className="interest-btn">Express Interest</button>
                     </div>
-                    <button className="interest-btn">Express Interest</button>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Active Projects */}
@@ -161,46 +193,9 @@ export default function ProfessionalDashboard() {
             <div className="flex justify-between items-end border-b border-[#dcc1b5] pb-3 mb-6">
               <h3 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>My Active Projects</h3>
             </div>
-            <div className="flex flex-col gap-3">
-
-              <div className="active-project">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="text-sm font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }}>Nyarutarama Residence</h4>
-                    <span style={{ background: '#e1efd8', color: '#3b6623', borderRadius: '999px', padding: '2px 8px', fontSize: '11px', fontWeight: 600 }}>In Progress</span>
-                  </div>
-                  <p className="text-sm text-[#56433a]">Foundation Pouring · Client: M. Kamari</p>
-                </div>
-                <div className="w-full md:w-56 flex flex-col gap-1.5">
-                  <div className="flex justify-between text-xs font-medium text-[#56433a]" style={{ letterSpacing: '0.05em' }}>
-                    <span>Timeline</span><span>45%</span>
-                  </div>
-                  <div className="w-full bg-[#e9e1dc] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-[#934b19] h-full rounded-full" style={{ width: '45%' }} />
-                  </div>
-                </div>
-                <button className="flex-shrink-0 border border-[#dcc1b5] text-[#1e1b18] text-sm font-semibold px-4 py-2 hover:border-[#99420d] hover:text-[#99420d] transition-colors" style={{ borderRadius: '999px', letterSpacing: '0.05em' }}>Update</button>
-              </div>
-
-              <div className="active-project">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="text-sm font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }}>Kiyovu Boutique Hotel</h4>
-                    <span style={{ background: '#ffdbc9', color: '#753401', borderRadius: '999px', padding: '2px 8px', fontSize: '11px', fontWeight: 600 }}>Planning</span>
-                  </div>
-                  <p className="text-sm text-[#56433a]">Blueprint Finalization · Client: Heritage Group</p>
-                </div>
-                <div className="w-full md:w-56 flex flex-col gap-1.5">
-                  <div className="flex justify-between text-xs font-medium text-[#56433a]" style={{ letterSpacing: '0.05em' }}>
-                    <span>Timeline</span><span>15%</span>
-                  </div>
-                  <div className="w-full bg-[#e9e1dc] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-[#934b19] h-full rounded-full" style={{ width: '15%' }} />
-                  </div>
-                </div>
-                <button className="flex-shrink-0 border border-[#dcc1b5] text-[#1e1b18] text-sm font-semibold px-4 py-2 hover:border-[#99420d] hover:text-[#99420d] transition-colors" style={{ borderRadius: '999px', letterSpacing: '0.05em' }}>Update</button>
-              </div>
-
+            <div className="flex flex-col items-center gap-3 py-12 text-center">
+              <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '48px' }}>construction</span>
+              <p className="text-base text-[#56433a]">No active projects yet. Express interest in a project to get started.</p>
             </div>
           </section>
 
