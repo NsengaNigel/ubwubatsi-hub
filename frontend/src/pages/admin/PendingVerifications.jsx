@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import AdminSidebar from '../../components/AdminSidebar';
 
 export default function PendingVerifications() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [professionals, setProfessionals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [verifiedIds, setVerifiedIds] = useState(new Set());
@@ -47,26 +47,12 @@ export default function PendingVerifications() {
           <div className="flex items-center gap-4">
             <span className="text-sm font-semibold text-[#1e1b18]">{user?.fullName}</span>
             <span className="inline-block bg-[#99420d] text-white text-xs font-semibold px-3 py-1 rounded-full">Admin</span>
-            <button onClick={() => { logout(); navigate('/'); }} className="text-sm font-semibold text-[#56433a] hover:text-[#99420d] transition-colors">Logout</button>
           </div>
         </div>
       </header>
 
       <div className="flex flex-1">
-        <aside className="hidden md:flex flex-col w-60 border-r border-[#dcc1b5] pt-8 px-4 gap-1">
-          <Link to="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#56433a] hover:bg-[rgba(153,66,13,0.04)] text-sm font-semibold transition-colors" style={{ letterSpacing: '0.05em' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>dashboard</span>
-            Dashboard
-          </Link>
-          <Link to="/admin/verifications" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(153,66,13,0.06)] text-[#99420d] text-sm font-semibold" style={{ letterSpacing: '0.05em' }}>
-            <span className="material-symbols-outlined fill" style={{ fontSize: '20px' }}>verified_user</span>
-            Verifications
-          </Link>
-          <Link to="/admin/analytics" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#56433a] hover:bg-[rgba(153,66,13,0.04)] text-sm font-semibold transition-colors" style={{ letterSpacing: '0.05em' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>analytics</span>
-            Analytics
-          </Link>
-        </aside>
+        <AdminSidebar />
 
         <main className="flex-1 p-8">
           <div className="max-w-5xl mx-auto">
@@ -129,8 +115,8 @@ export default function PendingVerifications() {
                                     onClick={() => handleApprove(pro._id)}
                                     className="text-xs font-semibold text-white px-3 py-1.5 rounded-full transition-colors"
                                     style={{ background: '#99420d', letterSpacing: '0.04em', border: 'none', cursor: 'pointer' }}
-                                    onMouseOver={e => e.target.style.background = '#7a3000'}
-                                    onMouseOut={e => e.target.style.background = '#99420d'}
+                                    onMouseOver={e => e.currentTarget.style.background = '#7a3000'}
+                                    onMouseOut={e => e.currentTarget.style.background = '#99420d'}
                                   >
                                     Approve
                                   </button>

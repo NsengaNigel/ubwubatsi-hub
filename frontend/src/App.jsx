@@ -9,12 +9,15 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ClientDashboard from './pages/ClientDashboard';
 import PostProject from './pages/PostProject';
+import EditProject from './pages/EditProject';
 import BrowseProfessionals from './pages/BrowseProfessionals';
 import ProfessionalProfile from './pages/ProfessionalProfile';
 import ProfessionalDashboard from './pages/ProfessionalDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PendingVerifications from './pages/admin/PendingVerifications';
 import Analytics from './pages/admin/Analytics';
+import AllUsers from './pages/admin/AllUsers';
+import AllProjects from './pages/admin/AllProjects';
 
 export default function App() {
   return (
@@ -44,6 +47,7 @@ export default function App() {
           {/* Protected */}
           <Route path="/client-dashboard" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
           <Route path="/post-project" element={<ProtectedRoute><PostProject /></ProtectedRoute>} />
+          <Route path="/edit-project/:id" element={<ProtectedRoute><EditProject /></ProtectedRoute>} />
           <Route path="/browse-professionals" element={<ProtectedRoute><BrowseProfessionals /></ProtectedRoute>} />
           <Route path="/professional/:id" element={<ProtectedRoute><ProfessionalProfile /></ProtectedRoute>} />
           <Route path="/professional-dashboard" element={<ProtectedRoute><ProfessionalDashboard /></ProtectedRoute>} />
@@ -52,6 +56,8 @@ export default function App() {
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin/verifications" element={<AdminRoute><PendingVerifications /></AdminRoute>} />
           <Route path="/admin/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><AllUsers /></AdminRoute>} />
+          <Route path="/admin/projects" element={<AdminRoute><AllProjects /></AdminRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

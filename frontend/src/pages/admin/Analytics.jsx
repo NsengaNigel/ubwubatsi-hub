@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import AdminSidebar from '../../components/AdminSidebar';
 
 const METRICS = [
   { key: 'totalUsers', label: 'Total Users', icon: 'group', color: '#99420d' },
@@ -15,23 +16,35 @@ const METRICS = [
   { key: 'pendingVerifications', label: 'Pending Verifications', icon: 'pending', color: '#ba1a1a' },
 ];
 
+const ROLE_COLORS = {
+  admin: '#ba1a1a',
+  professional: '#99420d',
+  client: '#0d47a1',
+};
+
 export default function Analytics() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [analytics, setAnalytics] = useState(null);
+  const [recentUsers, setRecentUsers] = useState([]);
+  const [recentProjects, setRecentProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/api/admin/analytics')
-      .then(r => setAnalytics(r.data))
+    Promise.all([
+      api.get('/api/admin/analytics'),
+      api.get('/api/admin/users'),
+      api.get('/api/admin/projects'),
+    ])
+      .then(([analyticsRes, usersRes, projectsRes]) => {
+        setAnalytics(analyticsRes.data);
+        setRecentUsers(usersRes.data.slice(0, 5));
+        setRecentProjects(projectsRes.data.slice(0, 5));
+      })
       .catch(() => toast.error('Failed to load analytics'))
       .finally(() => setLoading(false));
   }, []);
 
-  const chartData = analytics?.registrationsPerDay || [
-    { day: 'Mon', count: 4 }, { day: 'Tue', count: 7 }, { day: 'Wed', count: 3 },
-    { day: 'Thu', count: 9 }, { day: 'Fri', count: 6 }, { day: 'Sat', count: 2 }, { day: 'Sun', count: 5 },
-  ];
+  const chartData = analytics?.registrationsPerDay || [];
 
   return (
     <div className="bg-[#fff8f5] min-h-screen flex flex-col">
@@ -41,26 +54,12 @@ export default function Analytics() {
           <div className="flex items-center gap-4">
             <span className="text-sm font-semibold text-[#1e1b18]">{user?.fullName}</span>
             <span className="inline-block bg-[#99420d] text-white text-xs font-semibold px-3 py-1 rounded-full">Admin</span>
-            <button onClick={() => { logout(); navigate('/'); }} className="text-sm font-semibold text-[#56433a] hover:text-[#99420d] transition-colors">Logout</button>
           </div>
         </div>
       </header>
 
       <div className="flex flex-1">
-        <aside className="hidden md:flex flex-col w-60 border-r border-[#dcc1b5] pt-8 px-4 gap-1">
-          <Link to="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#56433a] hover:bg-[rgba(153,66,13,0.04)] text-sm font-semibold transition-colors" style={{ letterSpacing: '0.05em' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>dashboard</span>
-            Dashboard
-          </Link>
-          <Link to="/admin/verifications" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#56433a] hover:bg-[rgba(153,66,13,0.04)] text-sm font-semibold transition-colors" style={{ letterSpacing: '0.05em' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>verified_user</span>
-            Verifications
-          </Link>
-          <Link to="/admin/analytics" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[rgba(153,66,13,0.06)] text-[#99420d] text-sm font-semibold" style={{ letterSpacing: '0.05em' }}>
-            <span className="material-symbols-outlined fill" style={{ fontSize: '20px' }}>analytics</span>
-            Analytics
-          </Link>
-        </aside>
+        <AdminSidebar />
 
         <main className="flex-1 p-8">
           <div className="max-w-5xl mx-auto">
@@ -91,7 +90,7 @@ export default function Analytics() {
                 </div>
 
                 {/* Bar chart */}
-                <div className="card-shell">
+                <div className="card-shell mb-8">
                   <div className="card-core" style={{ padding: '28px 32px' }}>
                     <h2 className="text-[#1e1b18] mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>
                       User Registrations — Last 7 Days
@@ -112,6 +111,75 @@ export default function Analytics() {
                     </ResponsiveContainer>
                   </div>
                 </div>
+
+                {/* Recent users */}
+                <div className="card-shell mb-8">
+                  <div className="card-core" style={{ padding: '28px 32px' }}>
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Recent Users</h2>
+                      <Link to="/admin/users" className="text-sm font-semibold text-[#99420d] hover:underline" style={{ letterSpacing: '0.05em' }}>View all</Link>
+                    </div>
+                    {recentUsers.length === 0 ? (
+                      <p className="text-sm text-[#56433a]">No users registered yet.</p>
+                    ) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
+                            {['Name', 'Role', 'Registered'].map(h => (
+                              <th key={h} className="text-xs font-semibold text-[#56433a] text-left pb-3" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {recentUsers.map((u, i) => (
+                            <tr key={u._id} style={{ borderBottom: i < recentUsers.length - 1 ? '1px solid rgba(220,193,181,0.4)' : 'none' }}>
+                              <td className="py-3 text-sm font-semibold text-[#1e1b18]">{u.fullName}</td>
+                              <td className="py-3">
+                                <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${ROLE_COLORS[u.role]}15`, color: ROLE_COLORS[u.role] || '#56433a', letterSpacing: '0.05em' }}>
+                                  {u.role}
+                                </span>
+                              </td>
+                              <td className="py-3 text-sm text-[#56433a]">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </div>
+
+                {/* Recent projects */}
+                <div className="card-shell">
+                  <div className="card-core" style={{ padding: '28px 32px' }}>
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Recent Projects</h2>
+                      <Link to="/admin/projects" className="text-sm font-semibold text-[#99420d] hover:underline" style={{ letterSpacing: '0.05em' }}>View all</Link>
+                    </div>
+                    {recentProjects.length === 0 ? (
+                      <p className="text-sm text-[#56433a]">No projects posted yet.</p>
+                    ) : (
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
+                            {['Title', 'Client', 'Date'].map(h => (
+                              <th key={h} className="text-xs font-semibold text-[#56433a] text-left pb-3" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {recentProjects.map((p, i) => (
+                            <tr key={p._id} style={{ borderBottom: i < recentProjects.length - 1 ? '1px solid rgba(220,193,181,0.4)' : 'none' }}>
+                              <td className="py-3 text-sm font-semibold text-[#1e1b18]">{p.title}</td>
+                              <td className="py-3 text-sm text-[#56433a]">{p.clientId?.fullName || '—'}</td>
+                              <td className="py-3 text-sm text-[#56433a]">{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </div>
+
               </>
             )}
           </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import toast from 'react-hot-toast';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -51,6 +52,17 @@ export default function ClientDashboard() {
       .catch(() => setError('Could not load your projects.'))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this project? This cannot be undone.')) return;
+    try {
+      await api.delete(`/api/projects/${id}`);
+      setProjects(prev => prev.filter(p => p._id !== id));
+      toast.success('Project deleted.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete project.');
+    }
+  };
 
   return (
     <div className="bg-[#fff8f5] text-[#1e1b18] min-h-screen flex flex-col">
@@ -129,13 +141,8 @@ export default function ClientDashboard() {
             <h3 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>My Posted Projects</h3>
           </div>
 
-          {loading && (
-            <p className="text-sm text-[#56433a]">Loading your projects…</p>
-          )}
-
-          {error && (
-            <p className="text-sm text-[#ba1a1a]">{error}</p>
-          )}
+          {loading && <p className="text-sm text-[#56433a]">Loading your projects…</p>}
+          {error && <p className="text-sm text-[#ba1a1a]">{error}</p>}
 
           {!loading && !error && projects.length === 0 && (
             <div className="flex flex-col items-center gap-3 py-12 text-center">
@@ -156,13 +163,13 @@ export default function ClientDashboard() {
                 const badge = STATUS_STYLES[proj.status] || STATUS_STYLES.open;
                 return (
                   <div key={proj._id} className="project-item fade-up du-4">
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-4 flex-1 min-w-0">
                       <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(153,66,13,0.08)' }}>
                         <span className="material-symbols-outlined text-[#99420d]" style={{ fontSize: '20px' }}>architecture</span>
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <h4 className="text-base font-semibold text-[#1e1b18]">{proj.title}</h4>
-                        <div className="flex items-center gap-3 mt-0.5 text-sm text-[#56433a]">
+                        <div className="flex flex-wrap items-center gap-3 mt-0.5 text-sm text-[#56433a]">
                           <span className="flex items-center gap-1">
                             <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>calendar_today</span>
                             {formatDate(proj.createdAt)}
@@ -172,9 +179,25 @@ export default function ClientDashboard() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-shrink-0">
                       <span className="status-badge" style={{ background: badge.background, color: badge.color }}>{badge.label}</span>
                       <span className="text-sm font-medium text-[#56433a]">{proj.budget}</span>
+                      <Link
+                        to={`/edit-project/${proj._id}`}
+                        className="flex items-center gap-1 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
+                        style={{ letterSpacing: '0.04em', textDecoration: 'none' }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>edit</span>
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(proj._id)}
+                        className="flex items-center gap-1 text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
+                        style={{ letterSpacing: '0.04em', background: 'transparent', cursor: 'pointer' }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>delete</span>
+                        Delete
+                      </button>
                     </div>
                   </div>
                 );

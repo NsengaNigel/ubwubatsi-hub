@@ -28,7 +28,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // GET /api/projects/my-projects — projects posted by the logged-in client
-// Must be defined BEFORE /:id so Express does not treat "my-projects" as an id
+// Defined BEFORE /:id so Express does not treat "my-projects" as an id
 router.get('/my-projects', auth, async (req, res) => {
   try {
     const projects = await Project.find({ clientId: req.user.userId }).sort({ createdAt: -1 });
@@ -49,6 +49,46 @@ router.get('/', auth, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error fetching projects' });
+  }
+});
+
+// GET /api/projects/:id — single project by ID
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    res.json(project);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error fetching project' });
+  }
+});
+
+// PUT /api/projects/:id — client updates their own project
+router.put('/:id', auth, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    if (project.clientId.toString() !== req.user.userId) {
+      return res.status(403).json({ message: 'Not authorized to edit this project' });
+    }
+
+    const { title, category, location, budget, description } = req.body;
+    project.title = title ?? project.title;
+    project.category = category ?? project.category;
+    project.budget = budget ?? project.budget;
+    project.description = description ?? project.description;
+
+    if (location && location !== project.location) {
+      project.location = location;
+      project.kubakaLink = `https://kubaka.gov.rw/search?location=${encodeURIComponent(location)}`;
+    }
+
+    await project.save();
+    res.json(project);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error updating project' });
   }
 });
 
