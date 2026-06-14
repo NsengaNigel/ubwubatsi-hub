@@ -6,6 +6,15 @@ const User = require('./models/User');
 dotenv.config();
 
 const seedAdmin = async () => {
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const phone = process.env.ADMIN_PHONE;
+
+  if (!email || !password || !phone) {
+    console.error('ADMIN_EMAIL, ADMIN_PASSWORD, and ADMIN_PHONE must be set in .env');
+    process.exit(1);
+  }
+
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('MongoDB connected');
@@ -17,21 +26,19 @@ const seedAdmin = async () => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('Butch44', salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const admin = new User({
       fullName: 'Ubwubatsi Admin',
-      email: 'donlechero5@yahoo.com',
-      phone: '0783419438',
+      email,
+      phone,
       password: hashedPassword,
       role: 'admin',
-      isVerified: true
+      isVerified: true,
     });
 
     await admin.save();
     console.log('Admin created successfully');
-    console.log('Email: donlechero5@yahoo.com');
-    console.log('Password: Butch44');
     process.exit();
 
   } catch (error) {
