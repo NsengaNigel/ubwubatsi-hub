@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import toast from 'react-hot-toast';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -17,6 +18,7 @@ export default function ProfessionalProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [messaging, setMessaging] = useState(false);
 
   useEffect(() => {
     api.get(`/api/professionals/${id}`)
@@ -24,6 +26,19 @@ export default function ProfessionalProfile() {
       .catch(() => setError('Could not load this profile.'))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleSendMessage = async () => {
+    if (!user) { navigate('/login'); return; }
+    setMessaging(true);
+    try {
+      const { data: convo } = await api.post('/api/messages/conversation', { receiverId: id });
+      navigate('/messages', { state: { conversationId: convo._id } });
+    } catch {
+      toast.error('Could not start conversation');
+    } finally {
+      setMessaging(false);
+    }
+  };
 
   const pro = profile?.userId || {};
   const initials = getInitials(pro.fullName);
@@ -158,9 +173,9 @@ export default function ProfessionalProfile() {
                 </h3>
                 <p className="text-sm text-[#56433a] mb-5">Typically responds within 24 hours.</p>
                 <div className="flex flex-col gap-3">
-                  <button className="action-btn-primary">
+                  <button className="action-btn-primary" onClick={handleSendMessage} disabled={messaging}>
                     <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>send</span>
-                    Send Message
+                    {messaging ? 'Opening...' : 'Send Message'}
                   </button>
                   <button className="action-btn-outline">
                     <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>calendar_month</span>

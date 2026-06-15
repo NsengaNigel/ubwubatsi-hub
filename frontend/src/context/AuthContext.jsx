@@ -41,6 +41,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('ubwubatsi_user');
     setToken(null);
     setUser(null);
+    window.location.href = '/login';
   };
 
   return (

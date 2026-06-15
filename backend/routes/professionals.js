@@ -4,9 +4,6 @@ const User = require('../models/User');
 const Professional = require('../models/Professional');
 const auth = require('../middleware/auth');
 
-// Merges a User record with an optional Professional profile into one shape
-// the frontend expects. Uses the User's _id as the top-level _id so the
-// /professional/:id route works with user IDs, not profile IDs.
 function mergeProfile(user, profile) {
   return {
     _id: user._id,
@@ -22,7 +19,6 @@ function mergeProfile(user, profile) {
 }
 
 // GET /api/professionals — all verified professionals
-// Queries Users first so professionals without a profile record still appear.
 router.get('/', auth, async (req, res) => {
   try {
     const { specialty, location } = req.query;
@@ -39,8 +35,6 @@ router.get('/', auth, async (req, res) => {
       })
     );
 
-    // Apply optional query filters (client-side filters in the browser handle
-    // the same thing, but support server-side too for future API consumers)
     const filtered = results.filter(r => {
       if (specialty && r.specialty !== specialty) return false;
       if (location && !r.location?.toLowerCase().includes(location.toLowerCase())) return false;
@@ -51,6 +45,27 @@ router.get('/', auth, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error fetching professionals' });
+  }
+});
+
+// PUT /api/professionals/profile — professional updates their own profile
+// Defined before GET /:id to avoid "profile" being treated as an ID
+router.put('/profile', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'professional') {
+      return res.status(403).json({ message: 'Only professionals can update a profile' });
+    }
+    const { specialty, bio, location } = req.body;
+    const profile = await Professional.findOneAndUpdate(
+      { userId: req.user.userId },
+      { specialty, bio, location },
+      { upsert: true, new: true }
+    );
+    const user = await User.findById(req.user.userId, { password: 0 });
+    res.json(mergeProfile(user, profile));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error updating profile' });
   }
 });
 
