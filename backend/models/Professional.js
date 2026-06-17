@@ -7,6 +7,12 @@ const professionalSchema = new mongoose.Schema({
   location: { type: String },
   profilePicture: { type: String },
   portfolioImages: [{ type: String }],
+  certifications: [{
+    name: { type: String, required: true },
+    issuingBody: { type: String },
+    year: { type: String },
+    _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+  }],
   averageRating: { type: Number, default: 0 },
   totalReviews: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },

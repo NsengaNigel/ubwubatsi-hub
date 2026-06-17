@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/admin/projects', icon: 'folder_open', label: 'All Projects' },
   { to: '/admin/verifications', icon: 'verified_user', label: 'Verifications' },
   { to: '/admin/analytics', icon: 'analytics', label: 'Analytics' },
+  { to: '/admin/settings', icon: 'settings', label: 'Settings' },
 ];
 
 export default function AdminSidebar() {

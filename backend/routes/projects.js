@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Project = require('../models/Project');
+const Expression = require('../models/Expression');
 const auth = require('../middleware/auth');
 
 // POST /api/projects — client posts a new project
@@ -28,7 +29,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // GET /api/projects/my-projects — projects posted by the logged-in client
-// Defined BEFORE /:id so Express does not treat "my-projects" as an id
+// Static routes must be BEFORE /:id
 router.get('/my-projects', auth, async (req, res) => {
   try {
     const projects = await Project.find({ clientId: req.user.userId }).sort({ createdAt: -1 });
@@ -39,7 +40,26 @@ router.get('/my-projects', auth, async (req, res) => {
   }
 });
 
-// GET /api/projects — all projects (for professionals to browse)
+// GET /api/projects/active/:professionalId — projects with accepted expressions
+// Static prefix "active" must be before /:id
+router.get('/active/:professionalId', auth, async (req, res) => {
+  try {
+    const expressions = await Expression.find({
+      professionalId: req.params.professionalId,
+      status: 'accepted',
+    });
+    const projectIds = expressions.map(e => e.projectId);
+    const projects = await Project.find({ _id: { $in: projectIds } })
+      .populate('clientId', 'fullName email')
+      .sort({ createdAt: -1 });
+    res.json(projects);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error fetching active projects' });
+  }
+});
+
+// GET /api/projects — all projects (professionals browse)
 router.get('/', auth, async (req, res) => {
   try {
     const projects = await Project.find()
@@ -52,7 +72,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// GET /api/projects/:id — single project by ID
+// GET /api/projects/:id
 router.get('/:id', auth, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
@@ -92,7 +112,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// DELETE /api/projects/:id — client deletes their own project
+// DELETE /api/projects/:id
 router.delete('/:id', auth, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);

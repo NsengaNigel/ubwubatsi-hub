@@ -120,4 +120,25 @@ router.delete('/portfolio', auth, async (req, res) => {
   }
 });
 
+// DELETE /api/upload/profile-picture — all roles
+router.delete('/profile-picture', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.profilePicture) {
+      const publicId = getPublicId(user.profilePicture);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    await User.findByIdAndUpdate(req.user.userId, { profilePicture: null });
+    res.json({ message: 'Profile picture removed' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to delete profile picture' });
+  }
+});
+
 module.exports = router;

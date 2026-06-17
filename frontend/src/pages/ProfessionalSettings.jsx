@@ -6,47 +6,34 @@ import ImageUpload from '../components/ImageUpload';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
+const inputCls = "w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors";
+const labelCls = "text-sm font-medium text-[#1e1b18]";
+
 export default function ProfessionalSettings() {
   const { user, refreshUser } = useAuth();
 
   const basicForm = useForm();
   const proForm = useForm();
+  const passwordForm = useForm();
 
   const [portfolioImages, setPortfolioImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
-
-    const fetchAll = async () => {
-      try {
-        const [meRes, profileRes] = await Promise.all([
-          api.get('/api/auth/me'),
-          api.get('/api/professionals/my-profile'),
-        ]);
+    Promise.all([
+      api.get('/api/auth/me'),
+      api.get('/api/professionals/my-profile'),
+    ])
+      .then(([meRes, profileRes]) => {
         const me = meRes.data;
         const p = profileRes.data;
-
-        basicForm.reset({
-          fullName: me.fullName || '',
-          phone: me.phone || '',
-        });
-
-        proForm.reset({
-          specialty: p.specialty || '',
-          bio: p.bio || '',
-          location: p.location || '',
-        });
-
+        basicForm.reset({ fullName: me.fullName || '', phone: me.phone || '' });
+        proForm.reset({ specialty: p.specialty || '', bio: p.bio || '', location: p.location || '' });
         setPortfolioImages(p.portfolioImages || []);
-      } catch {
-        toast.error('Failed to load profile data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAll();
+      })
+      .catch(() => toast.error('Failed to load profile data'))
+      .finally(() => setLoading(false));
   }, [user]);
 
   const onSaveBasic = async (data) => {
@@ -68,9 +55,30 @@ export default function ProfessionalSettings() {
     }
   };
 
+  const onChangePassword = async (data) => {
+    try {
+      await api.put('/api/users/change-password', data);
+      toast.success('Password updated successfully');
+      passwordForm.reset();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update password');
+    }
+  };
+
   const handleProfilePicUpload = async () => {
     await refreshUser();
     toast.success('Profile picture updated');
+  };
+
+  const handleProfilePicDelete = async () => {
+    if (!window.confirm('Remove your profile picture?')) return;
+    try {
+      await api.delete('/api/upload/profile-picture');
+      await refreshUser();
+      toast.success('Profile picture removed');
+    } catch {
+      toast.error('Failed to remove profile picture');
+    }
   };
 
   const handlePortfolioUpload = (data) => {
@@ -79,6 +87,7 @@ export default function ProfessionalSettings() {
   };
 
   const handlePortfolioDelete = async (imageUrl) => {
+    if (!window.confirm('Delete this portfolio image?')) return;
     try {
       const { data } = await api.delete('/api/upload/portfolio', { data: { imageUrl } });
       setPortfolioImages(data.portfolioImages || []);
@@ -107,15 +116,13 @@ export default function ProfessionalSettings() {
             {/* Profile Picture */}
             <section className="section-shell">
               <div className="section-core">
-                <h2 className="mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>
-                  Profile Picture
-                </h2>
+                <h2 className="mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Profile Picture</h2>
                 <ImageUpload
                   uploadUrl="/api/upload/profile-picture"
                   fieldName="profilePicture"
                   existingImages={user?.profilePicture ? [user.profilePicture] : []}
                   onUpload={handleProfilePicUpload}
-                  onDelete={() => {}}
+                  onDelete={handleProfilePicDelete}
                 />
               </div>
             </section>
@@ -123,34 +130,18 @@ export default function ProfessionalSettings() {
             {/* Basic Info */}
             <section className="section-shell">
               <div className="section-core">
-                <h2 className="mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>
-                  Basic Information
-                </h2>
+                <h2 className="mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Profile Details</h2>
                 <form onSubmit={basicForm.handleSubmit(onSaveBasic)} className="flex flex-col gap-5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-[#1e1b18]">Full Name</label>
-                    <input
-                      {...basicForm.register('fullName', { required: true })}
-                      type="text"
-                      placeholder="Your full name"
-                      className="w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors"
-                    />
+                    <label className={labelCls}>Full Name</label>
+                    <input {...basicForm.register('fullName', { required: true })} type="text" placeholder="Your full name" className={inputCls} />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-[#1e1b18]">Phone Number</label>
-                    <input
-                      {...basicForm.register('phone')}
-                      type="tel"
-                      placeholder="+250 7XX XXX XXX"
-                      className="w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors"
-                    />
+                    <label className={labelCls}>Phone Number</label>
+                    <input {...basicForm.register('phone')} type="tel" placeholder="+250 7XX XXX XXX" className={inputCls} />
                   </div>
-                  <button
-                    type="submit"
-                    disabled={basicForm.formState.isSubmitting}
-                    className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50"
-                  >
-                    {basicForm.formState.isSubmitting ? 'Saving...' : 'Save Basic Info'}
+                  <button type="submit" disabled={basicForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
+                    {basicForm.formState.isSubmitting ? 'Saving...' : 'Save Profile Details'}
                   </button>
                 </form>
               </div>
@@ -159,16 +150,11 @@ export default function ProfessionalSettings() {
             {/* Professional Details */}
             <section className="section-shell">
               <div className="section-core">
-                <h2 className="mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>
-                  Professional Details
-                </h2>
+                <h2 className="mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Professional Details</h2>
                 <form onSubmit={proForm.handleSubmit(onSavePro)} className="flex flex-col gap-5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-[#1e1b18]">Specialty</label>
-                    <select
-                      {...proForm.register('specialty')}
-                      className="w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] focus:outline-none focus:border-[#99420d] transition-colors"
-                    >
+                    <label className={labelCls}>Specialty</label>
+                    <select {...proForm.register('specialty')} className={inputCls}>
                       <option value="">Select specialty</option>
                       <option value="Architect">Architect</option>
                       <option value="Civil Engineer">Civil Engineer</option>
@@ -176,28 +162,14 @@ export default function ProfessionalSettings() {
                     </select>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-[#1e1b18]">Location</label>
-                    <input
-                      {...proForm.register('location')}
-                      type="text"
-                      placeholder="e.g. Kigali, Rwanda"
-                      className="w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors"
-                    />
+                    <label className={labelCls}>Location</label>
+                    <input {...proForm.register('location')} type="text" placeholder="e.g. Kigali, Rwanda" className={inputCls} />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-medium text-[#1e1b18]">Bio</label>
-                    <textarea
-                      {...proForm.register('bio')}
-                      rows={4}
-                      placeholder="Tell clients about your experience and expertise..."
-                      className="w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors resize-none"
-                    />
+                    <label className={labelCls}>Bio</label>
+                    <textarea {...proForm.register('bio')} rows={4} placeholder="Tell clients about your experience and expertise..." className={`${inputCls} resize-none`} />
                   </div>
-                  <button
-                    type="submit"
-                    disabled={proForm.formState.isSubmitting}
-                    className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50"
-                  >
+                  <button type="submit" disabled={proForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
                     {proForm.formState.isSubmitting ? 'Saving...' : 'Save Professional Details'}
                   </button>
                 </form>
@@ -208,9 +180,7 @@ export default function ProfessionalSettings() {
             <section className="section-shell">
               <div className="section-core">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>
-                    Portfolio
-                  </h2>
+                  <h2 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Portfolio</h2>
                   <span className="text-xs text-[#56433a]">{portfolioImages.length}/5 images</span>
                 </div>
                 <ImageUpload
@@ -222,6 +192,30 @@ export default function ProfessionalSettings() {
                   onUpload={handlePortfolioUpload}
                   onDelete={handlePortfolioDelete}
                 />
+              </div>
+            </section>
+
+            {/* Change Password */}
+            <section className="section-shell">
+              <div className="section-core">
+                <h2 className="mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Change Password</h2>
+                <form onSubmit={passwordForm.handleSubmit(onChangePassword)} className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className={labelCls}>Current Password</label>
+                    <input {...passwordForm.register('currentPassword', { required: true })} type="password" placeholder="Enter current password" className={inputCls} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className={labelCls}>New Password</label>
+                    <input {...passwordForm.register('newPassword', { required: true, minLength: 6 })} type="password" placeholder="At least 6 characters" className={inputCls} />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className={labelCls}>Confirm New Password</label>
+                    <input {...passwordForm.register('confirmPassword', { required: true })} type="password" placeholder="Repeat new password" className={inputCls} />
+                  </div>
+                  <button type="submit" disabled={passwordForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
+                    {passwordForm.formState.isSubmitting ? 'Updating...' : 'Update Password'}
+                  </button>
+                </form>
               </div>
             </section>
 

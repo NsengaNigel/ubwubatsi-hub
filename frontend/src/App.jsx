@@ -23,7 +23,7 @@ import PendingVerifications from './pages/admin/PendingVerifications';
 import Analytics from './pages/admin/Analytics';
 import AllUsers from './pages/admin/AllUsers';
 import AllProjects from './pages/admin/AllProjects';
-import AdminSettings from './pages/AdminSettings';
+import AdminSettings from './pages/admin/AdminSettings';
 
 export default function App() {
   return (
@@ -69,7 +69,7 @@ export default function App() {
             <Route path="/admin/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
             <Route path="/admin/users" element={<AdminRoute><AllUsers /></AdminRoute>} />
             <Route path="/admin/projects" element={<AdminRoute><AllProjects /></AdminRoute>} />
-            <Route path="/admin-settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+            <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
           </Routes>
         </BrowserRouter>
       </SocketProvider>

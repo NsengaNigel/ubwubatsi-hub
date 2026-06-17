@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 import api from '../api/axios';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -13,6 +14,7 @@ export default function ImageUpload({
   onUpload,
   existingImages = [],
   onDelete,
+  deleteUrl,
 }) {
   const [previews, setPreviews] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -40,10 +42,9 @@ export default function ImageUpload({
       return;
     }
 
-    const localPreviews = files.map(f => URL.createObjectURL(f));
-    setPreviews(localPreviews);
-
+    setPreviews(files.map(f => URL.createObjectURL(f)));
     setUploading(true);
+
     const form = new FormData();
     if (multiple) {
       files.forEach(f => form.append(fieldName, f));
@@ -68,7 +69,19 @@ export default function ImageUpload({
   };
 
   const handleDelete = async (url) => {
-    if (onDelete) onDelete(url);
+    const confirmed = window.confirm('Delete this image? This cannot be undone.');
+    if (!confirmed) return;
+
+    if (onDelete) {
+      await onDelete(url);
+    } else if (deleteUrl) {
+      try {
+        await api.delete(deleteUrl, { data: { imageUrl: url } });
+        toast.success('Image deleted');
+      } catch {
+        toast.error('Failed to delete image');
+      }
+    }
   };
 
   const canAddMore = multiple
@@ -77,21 +90,18 @@ export default function ImageUpload({
 
   return (
     <div className="flex flex-col gap-3">
-      {label && (
-        <label className="text-sm font-medium text-[#1e1b18]">{label}</label>
-      )}
+      {label && <label className="text-sm font-medium text-[#1e1b18]">{label}</label>}
 
-      {/* Existing images */}
       {existingImages.length > 0 && (
         <div className={`grid gap-3 ${multiple ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1'}`}>
           {existingImages.map((src, i) => (
-            <div key={i} className="relative group">
+            <div key={i} className={`relative group ${!multiple ? 'w-24 h-24' : ''}`}>
               <img
                 src={src}
                 alt={`Image ${i + 1}`}
-                className={`w-full object-cover rounded-xl ${multiple ? 'h-36' : 'h-24 w-24 rounded-full'}`}
+                className={`object-cover rounded-xl ${multiple ? 'w-full h-36' : 'w-24 h-24 rounded-full'}`}
               />
-              {onDelete && (
+              {(onDelete || deleteUrl) && (
                 <button
                   type="button"
                   onClick={() => handleDelete(src)}
@@ -105,7 +115,6 @@ export default function ImageUpload({
         </div>
       )}
 
-      {/* Local previews while uploading */}
       {previews.length > 0 && (
         <div className={`grid gap-3 ${multiple ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1'}`}>
           {previews.map((src, i) => (
@@ -113,7 +122,7 @@ export default function ImageUpload({
               <img
                 src={src}
                 alt={`Preview ${i + 1}`}
-                className={`w-full object-cover rounded-xl opacity-60 ${multiple ? 'h-36' : 'h-24 w-24 rounded-full'}`}
+                className={`object-cover rounded-xl opacity-60 ${multiple ? 'w-full h-36' : 'w-24 h-24 rounded-full'}`}
               />
               {uploading && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -125,7 +134,6 @@ export default function ImageUpload({
         </div>
       )}
 
-      {/* Upload trigger */}
       {canAddMore && (
         <button
           type="button"
@@ -141,8 +149,7 @@ export default function ImageUpload({
               ? 'Uploading...'
               : multiple
                 ? `Add Photos (${maxFiles - existingImages.length} remaining)`
-                : 'Upload Photo'
-            }
+                : 'Upload Photo'}
           </span>
           <span className="text-xs text-[#56433a]">JPG, PNG or WebP · max 5MB</span>
         </button>
