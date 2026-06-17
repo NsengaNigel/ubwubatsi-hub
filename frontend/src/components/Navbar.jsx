@@ -16,16 +16,12 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!user) return;
-    api.get('/api/messages/unread-count')
-      .then(res => setUnread(res.data.count))
-      .catch(() => {});
-
-    const interval = setInterval(() => {
+    const fetchUnread = () =>
       api.get('/api/messages/unread-count')
         .then(res => setUnread(res.data.count))
         .catch(() => {});
-    }, 30000);
-
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -33,14 +29,18 @@ export default function Navbar() {
     <Link
       to={to}
       className={`text-sm font-medium transition-colors ${
-        pathname === to || pathname.startsWith(to + '/')
-          ? 'text-[#99420d] border-b-2 border-[#99420d] pb-0.5'
-          : 'text-[#56433a] hover:text-[#99420d]'
+        pathname === to ? 'text-[#99420d] border-b-2 border-[#99420d] pb-0.5' : 'text-[#56433a] hover:text-[#99420d]'
       }`}
     >
       {label}
     </Link>
   );
+
+  const settingsPath = user?.role === 'client'
+    ? '/client-settings'
+    : user?.role === 'professional'
+      ? '/professional-settings'
+      : '/admin-settings';
 
   return (
     <nav className="bg-[#fff8f5] w-full top-0 sticky border-b border-[#dcc1b5] z-50">
@@ -70,6 +70,7 @@ export default function Navbar() {
                 {navLink('/browse-professionals', 'Find Experts')}
                 {navLink('/post-project', 'Post a Project')}
                 {navLink('/client-dashboard', 'My Projects')}
+                {navLink('/client-settings', 'Settings')}
               </>
             )}
 
@@ -85,6 +86,7 @@ export default function Navbar() {
                 {navLink('/admin', 'Dashboard')}
                 {navLink('/admin/users', 'Users')}
                 {navLink('/admin/projects', 'Projects')}
+                {navLink('/admin-settings', 'Settings')}
               </>
             )}
           </div>
@@ -105,15 +107,35 @@ export default function Navbar() {
                   </span>
                 )}
               </Link>
+
               <span className="hidden md:block text-sm font-medium text-[#56433a]">
                 {user.fullName?.split(' ')[0]}
               </span>
+
+              <Link to={settingsPath} title="Settings">
+                <button
+                  className="nav-avatar overflow-hidden"
+                  style={{ padding: 0 }}
+                  onClick={e => e.stopPropagation()}
+                >
+                  {user.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt={user.fullName}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    getInitials(user.fullName)
+                  )}
+                </button>
+              </Link>
+
               <button
                 onClick={logout}
-                className="nav-avatar"
+                className="hidden md:flex items-center gap-1 text-xs text-[#56433a] hover:text-[#99420d] transition-colors"
                 title="Logout"
               >
-                {getInitials(user.fullName)}
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>logout</span>
               </button>
             </>
           ) : (

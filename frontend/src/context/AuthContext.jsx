@@ -10,12 +10,25 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem('ubwubatsi_token');
-    const storedUser = localStorage.getItem('ubwubatsi_user');
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    if (!storedToken) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    setToken(storedToken);
+    api.get('/api/auth/me', {
+      headers: { Authorization: `Bearer ${storedToken}` },
+    })
+      .then(({ data }) => {
+        setUser(data);
+        localStorage.setItem('ubwubatsi_user', JSON.stringify(data));
+      })
+      .catch(() => {
+        localStorage.removeItem('ubwubatsi_token');
+        localStorage.removeItem('ubwubatsi_user');
+        setToken(null);
+        setUser(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const login = async (email, password) => {
@@ -36,6 +49,17 @@ export function AuthProvider({ children }) {
     return data.user;
   };
 
+  const refreshUser = async () => {
+    try {
+      const { data } = await api.get('/api/auth/me');
+      setUser(data);
+      localStorage.setItem('ubwubatsi_user', JSON.stringify(data));
+      return data;
+    } catch {
+      return null;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('ubwubatsi_token');
     localStorage.removeItem('ubwubatsi_user');
@@ -45,7 +69,16 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{
+      user,
+      token,
+      loading,
+      isVerified: user?.isVerified === true,
+      login,
+      register,
+      logout,
+      refreshUser,
+    }}>
       {children}
     </AuthContext.Provider>
   );

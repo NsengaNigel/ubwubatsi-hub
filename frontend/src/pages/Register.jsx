@@ -18,7 +18,8 @@ export default function Register() {
       if (role === 'professional') payload.registrationNumber = registrationNumber;
       const user = await registerUser(payload);
       toast.success('Account created successfully!');
-      if (user.role === 'professional') navigate('/professional-dashboard');
+      if (user.role === 'professional') navigate('/pending-verification');
+      else if (user.role === 'admin') navigate('/admin');
       else navigate('/client-dashboard');
     } catch (err) {
       const msg = err.response?.data?.message || 'Registration failed. Please try again.';

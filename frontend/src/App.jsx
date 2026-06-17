@@ -8,7 +8,9 @@ import AdminRoute from './components/AdminRoute';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import PendingVerification from './pages/PendingVerification';
 import ClientDashboard from './pages/ClientDashboard';
+import ClientSettings from './pages/ClientSettings';
 import PostProject from './pages/PostProject';
 import EditProject from './pages/EditProject';
 import BrowseProfessionals from './pages/BrowseProfessionals';
@@ -21,6 +23,7 @@ import PendingVerifications from './pages/admin/PendingVerifications';
 import Analytics from './pages/admin/Analytics';
 import AllUsers from './pages/admin/AllUsers';
 import AllProjects from './pages/admin/AllProjects';
+import AdminSettings from './pages/AdminSettings';
 
 export default function App() {
   return (
@@ -49,12 +52,14 @@ export default function App() {
             <Route path="/register" element={<Register />} />
 
             {/* Protected */}
+            <Route path="/pending-verification" element={<ProtectedRoute><PendingVerification /></ProtectedRoute>} />
             <Route path="/client-dashboard" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
+            <Route path="/client-settings" element={<ProtectedRoute><ClientSettings /></ProtectedRoute>} />
             <Route path="/post-project" element={<ProtectedRoute><PostProject /></ProtectedRoute>} />
             <Route path="/edit-project/:id" element={<ProtectedRoute><EditProject /></ProtectedRoute>} />
             <Route path="/browse-professionals" element={<ProtectedRoute><BrowseProfessionals /></ProtectedRoute>} />
             <Route path="/professional/:id" element={<ProtectedRoute><ProfessionalProfile /></ProtectedRoute>} />
-            <Route path="/professional-dashboard" element={<ProtectedRoute><ProfessionalDashboard /></ProtectedRoute>} />
+            <Route path="/professional-dashboard" element={<ProtectedRoute requireVerified><ProfessionalDashboard /></ProtectedRoute>} />
             <Route path="/professional-settings" element={<ProtectedRoute><ProfessionalSettings /></ProtectedRoute>} />
             <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
 
@@ -64,6 +69,7 @@ export default function App() {
             <Route path="/admin/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
             <Route path="/admin/users" element={<AdminRoute><AllUsers /></AdminRoute>} />
             <Route path="/admin/projects" element={<AdminRoute><AllProjects /></AdminRoute>} />
+            <Route path="/admin-settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
           </Routes>
         </BrowserRouter>
       </SocketProvider>

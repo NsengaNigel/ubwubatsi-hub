@@ -11,7 +11,7 @@ function mergeProfile(user, profile) {
     specialty: profile?.specialty || null,
     bio: profile?.bio || null,
     location: profile?.location || null,
-    profilePicture: profile?.profilePicture || null,
+    profilePicture: user.profilePicture || profile?.profilePicture || null,
     portfolioImages: profile?.portfolioImages || [],
     averageRating: profile?.averageRating || 0,
     totalReviews: profile?.totalReviews || 0,
@@ -49,7 +49,6 @@ router.get('/', auth, async (req, res) => {
 });
 
 // PUT /api/professionals/profile — professional updates their own profile
-// Defined before GET /:id to avoid "profile" being treated as an ID
 router.put('/profile', auth, async (req, res) => {
   try {
     if (req.user.role !== 'professional') {
@@ -66,6 +65,22 @@ router.put('/profile', auth, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error updating profile' });
+  }
+});
+
+// GET /api/professionals/my-profile — own profile (must be before /:id)
+router.get('/my-profile', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'professional') {
+      return res.status(403).json({ message: 'Only professionals can access this' });
+    }
+    const user = await User.findById(req.user.userId, { password: 0 });
+    if (!user) return res.status(404).json({ message: 'Not found' });
+    const profile = await Professional.findOne({ userId: user._id });
+    res.json(mergeProfile(user, profile));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

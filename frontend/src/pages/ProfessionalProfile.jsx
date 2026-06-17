@@ -90,8 +90,12 @@ export default function ProfessionalProfile() {
             <div className="profile-header fade-up du-1">
               <div className="h-36 md:h-48 bg-[#efe6e2]" />
               <div className="px-7 pb-7 -mt-12 flex flex-col sm:flex-row gap-5 items-start sm:items-end">
-                <div className="profile-avatar">
-                  <span className="text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '28px', fontWeight: 600 }}>{initials}</span>
+                <div className="profile-avatar overflow-hidden">
+                  {pro.profilePicture ? (
+                    <img src={pro.profilePicture} alt={pro.fullName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '28px', fontWeight: 600 }}>{initials}</span>
+                  )}
                 </div>
                 <div className="flex-1 pt-2 sm:pt-0">
                   <div className="flex items-center gap-2 mb-0.5">
@@ -138,7 +142,9 @@ export default function ProfessionalProfile() {
               {profile.portfolioImages && profile.portfolioImages.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {profile.portfolioImages.map((src, i) => (
-                    <img key={i} src={src} alt={`Portfolio item ${i + 1}`} className="w-full h-40 object-cover rounded-2xl" />
+                    <a key={i} href={src} target="_blank" rel="noopener noreferrer" className="block group">
+                      <img src={src} alt={`Portfolio item ${i + 1}`} className="w-full h-40 object-cover rounded-2xl group-hover:opacity-90 transition-opacity" />
+                    </a>
                   ))}
                 </div>
               ) : (
