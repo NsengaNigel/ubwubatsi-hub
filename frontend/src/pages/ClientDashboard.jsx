@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import Navbar from '../components/Navbar';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -36,15 +37,24 @@ const STATUS_STYLES = {
   completed: { background: 'rgba(225,239,216,0.9)', color: '#3b6623', label: 'Completed' },
 };
 
+const EXPR_STATUS_STYLES = {
+  pending: { bg: 'rgba(153,66,13,0.08)', color: '#99420d' },
+  accepted: { bg: 'rgba(14,115,45,0.08)', color: '#0e7312' },
+  rejected: { bg: 'rgba(186,26,26,0.08)', color: '#ba1a1a' },
+};
+
 export default function ClientDashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const firstName = user?.fullName?.split(' ')[0] || 'Client';
-  const initials = getInitials(user?.fullName || '');
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [expressionsModal, setExpressionsModal] = useState(null);
+  const [projectExpressions, setProjectExpressions] = useState([]);
+  const [expressionsLoading, setExpressionsLoading] = useState(false);
 
   useEffect(() => {
     api.get('/api/projects/my-projects')
@@ -64,27 +74,47 @@ export default function ClientDashboard() {
     }
   };
 
+  const handleOpenExpressions = async (proj) => {
+    setExpressionsModal(proj);
+    setExpressionsLoading(true);
+    try {
+      const res = await api.get(`/api/expressions/project/${proj._id}`);
+      setProjectExpressions(res.data);
+    } catch {
+      toast.error('Failed to load expressions');
+    } finally {
+      setExpressionsLoading(false);
+    }
+  };
+
+  const handleAccept = async (exprId) => {
+    try {
+      await api.put(`/api/expressions/${exprId}/accept`);
+      const res = await api.get(`/api/expressions/project/${expressionsModal._id}`);
+      setProjectExpressions(res.data);
+      setProjects(prev =>
+        prev.map(p => p._id === expressionsModal._id ? { ...p, status: 'in-progress' } : p)
+      );
+      toast.success('Professional accepted! Project is now in progress.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to accept');
+    }
+  };
+
+  const handleReject = async (exprId) => {
+    try {
+      await api.put(`/api/expressions/${exprId}/reject`);
+      const res = await api.get(`/api/expressions/project/${expressionsModal._id}`);
+      setProjectExpressions(res.data);
+      toast.success('Expression rejected.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to reject');
+    }
+  };
+
   return (
     <div className="bg-[#fff8f5] text-[#1e1b18] min-h-screen flex flex-col">
-      {/* Nav */}
-      <nav className="bg-[#fff8f5] w-full top-0 sticky border-b border-[#dcc1b5] z-50">
-        <div className="flex justify-between items-center h-20 px-10 max-w-[1280px] mx-auto">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</Link>
-            <div className="hidden md:flex gap-6">
-              <Link to="/browse-professionals" className="text-base text-[#56433a] hover:text-[#99420d] transition-colors">Find Experts</Link>
-              <Link to="/post-project" className="text-base text-[#99420d] font-medium border-b-2 border-[#99420d] pb-0.5">Projects</Link>
-              <a href="/#how-it-works" className="text-base text-[#56433a] hover:text-[#99420d] transition-colors">How it Works</a>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="p-2 text-[#56433a] hover:text-[#99420d] transition-colors">
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button className="nav-avatar" onClick={() => { logout(); navigate('/'); }}>{initials}</button>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="flex-grow px-4 md:px-10 max-w-[1280px] mx-auto w-full py-12">
 
@@ -161,6 +191,7 @@ export default function ClientDashboard() {
             <div className="flex flex-col gap-3">
               {projects.map((proj) => {
                 const badge = STATUS_STYLES[proj.status] || STATUS_STYLES.open;
+                const exprCount = proj.expressionCount || 0;
                 return (
                   <div key={proj._id} className="project-item fade-up du-4">
                     <div className="flex items-start gap-4 flex-1 min-w-0">
@@ -179,9 +210,22 @@ export default function ClientDashboard() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
+                    <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
                       <span className="status-badge" style={{ background: badge.background, color: badge.color }}>{badge.label}</span>
                       <span className="text-sm font-medium text-[#56433a]">{proj.budget}</span>
+                      <button
+                        onClick={() => handleOpenExpressions(proj)}
+                        className="relative flex items-center gap-1.5 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
+                        style={{ letterSpacing: '0.04em' }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>people</span>
+                        Interested Professionals
+                        {exprCount > 0 && (
+                          <span className="ml-1 bg-[#99420d] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                            {exprCount > 9 ? '9+' : exprCount}
+                          </span>
+                        )}
+                      </button>
                       <Link
                         to={`/edit-project/${proj._id}`}
                         className="flex items-center gap-1 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
@@ -209,6 +253,108 @@ export default function ClientDashboard() {
       </main>
 
       <Footer />
+
+      {/* Interested Professionals Modal */}
+      {expressionsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-[#fff8f5] rounded-2xl shadow-xl w-full max-w-lg flex flex-col" style={{ maxHeight: '85vh' }}>
+
+            {/* Modal header */}
+            <div className="flex justify-between items-start p-6 pb-4 border-b border-[#dcc1b5]">
+              <div>
+                <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600, color: '#1e1b18' }}>
+                  Interested Professionals
+                </h3>
+                <p className="text-sm text-[#56433a] mt-0.5">{expressionsModal.title}</p>
+              </div>
+              <button onClick={() => setExpressionsModal(null)} className="text-[#56433a] hover:text-[#99420d] ml-4">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            {/* Modal body */}
+            <div className="overflow-y-auto flex-1 p-6">
+              {expressionsLoading ? (
+                <div className="flex justify-center py-10">
+                  <div className="w-7 h-7 border-2 border-[#dcc1b5] border-t-[#99420d] rounded-full animate-spin" />
+                </div>
+              ) : projectExpressions.length === 0 ? (
+                <div className="flex flex-col items-center gap-3 py-10 text-center">
+                  <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '40px' }}>person_search</span>
+                  <p className="text-sm text-[#56433a]">No professionals have expressed interest in this project yet.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {projectExpressions.map((expr) => {
+                    const pro = expr.professionalId || {};
+                    const profile = expr.professionalProfile || {};
+                    const statusStyle = EXPR_STATUS_STYLES[expr.status] || EXPR_STATUS_STYLES.pending;
+                    return (
+                      <div key={expr._id} className="border border-[#dcc1b5] rounded-2xl p-4">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-11 h-11 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(153,66,13,0.08)' }}>
+                            {pro.profilePicture ? (
+                              <img src={pro.profilePicture} alt={pro.fullName} className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-sm font-semibold text-[#99420d]">{getInitials(pro.fullName)}</span>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-sm font-semibold text-[#1e1b18]">{pro.fullName || 'Professional'}</span>
+                              {pro.isVerified && (
+                                <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '14px' }} title="Verified">verified</span>
+                              )}
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize ml-auto" style={{ background: statusStyle.bg, color: statusStyle.color }}>
+                                {expr.status}
+                              </span>
+                            </div>
+                            {profile.specialty && (
+                              <p className="text-xs text-[#56433a] mt-0.5">{profile.specialty}</p>
+                            )}
+                            {profile.averageRating > 0 && (
+                              <div className="flex items-center gap-0.5 mt-0.5">
+                                <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '12px' }}>star</span>
+                                <span className="text-xs text-[#56433a]">{profile.averageRating.toFixed(1)}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {expr.message && (
+                          <p className="text-xs text-[#56433a] mb-3 px-3 py-2 rounded-xl" style={{ background: 'rgba(153,66,13,0.04)', borderLeft: '3px solid #dcc1b5' }}>
+                            "{expr.message}"
+                          </p>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-[#56433a]">{formatDate(expr.createdAt)}</span>
+                          {expr.status === 'pending' && (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleReject(expr._id)}
+                                className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#ba1a1a] text-[#ba1a1a] hover:bg-[#ba1a1a] hover:text-white transition-colors"
+                              >
+                                Reject
+                              </button>
+                              <button
+                                onClick={() => handleAccept(expr._id)}
+                                className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#99420d] text-white hover:bg-[#7a3409] transition-colors"
+                              >
+                                Accept
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

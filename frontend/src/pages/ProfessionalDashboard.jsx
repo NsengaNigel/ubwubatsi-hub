@@ -51,6 +51,10 @@ export default function ProfessionalDashboard() {
   const [showCertModal, setShowCertModal] = useState(false);
   const certForm = useForm();
 
+  const [interestModal, setInterestModal] = useState(null);
+  const [modalMessage, setModalMessage] = useState('');
+  const [submittingInterest, setSubmittingInterest] = useState(false);
+
   useEffect(() => {
     if (!user?.id) return;
 
@@ -83,15 +87,39 @@ export default function ProfessionalDashboard() {
       .finally(() => setLoadingCerts(false));
   }, [user?.id]);
 
-  const handleExpressInterest = async (projectId) => {
+  const handleOpenModal = (proj) => {
+    setInterestModal(proj);
+    setModalMessage('');
+  };
+
+  const handleSubmitInterest = async () => {
+    if (!interestModal) return;
+    setSubmittingInterest(true);
     try {
-      await api.post('/api/expressions', { projectId });
-      setExpressedIds(prev => new Set([...prev, projectId]));
+      await api.post('/api/expressions', { projectId: interestModal._id, message: modalMessage });
+      setExpressedIds(prev => new Set([...prev, interestModal._id]));
       const res = await api.get('/api/expressions/professional');
       setExpressions(res.data);
       toast.success('Interest expressed successfully');
+      setInterestModal(null);
+      setModalMessage('');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to express interest');
+    } finally {
+      setSubmittingInterest(false);
+    }
+  };
+
+  const handleWithdraw = async (exprId) => {
+    if (!window.confirm('Withdraw your interest in this project?')) return;
+    try {
+      await api.delete(`/api/expressions/${exprId}`);
+      const updated = expressions.filter(e => e._id !== exprId);
+      setExpressions(updated);
+      setExpressedIds(new Set(updated.map(e => e.projectId?._id || e.projectId)));
+      toast.success('Interest withdrawn');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to withdraw');
     }
   };
 
@@ -263,10 +291,10 @@ export default function ProfessionalDashboard() {
                         <button
                           className="interest-btn"
                           disabled={alreadyExpressed}
-                          onClick={() => !alreadyExpressed && handleExpressInterest(proj._id)}
-                          style={alreadyExpressed ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                          onClick={() => !alreadyExpressed && handleOpenModal(proj)}
+                          style={alreadyExpressed ? { opacity: 0.5, cursor: 'not-allowed', background: '#c9a898', color: '#fff' } : {}}
                         >
-                          {alreadyExpressed ? 'Interest Expressed' : 'Express Interest'}
+                          {alreadyExpressed ? 'Interest Submitted' : 'Express Interest'}
                         </button>
                       </div>
                     </div>
@@ -349,11 +377,29 @@ export default function ProfessionalDashboard() {
                         </div>
                         <h4 className="text-[#1e1b18] mb-1" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>{proj?.title || 'Project'}</h4>
                         <p className="text-sm text-[#56433a] mb-2">Client: {proj?.clientId?.fullName || 'Unknown'}</p>
-                        <div className="flex justify-between text-sm text-[#56433a]">
+                        <div className="flex justify-between text-sm text-[#56433a] mb-3">
                           <span className="flex items-center gap-1">
                             <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>location_on</span>{proj?.location}
                           </span>
                           <span>{proj?.budget}</span>
+                        </div>
+                        {expr.message && (
+                          <p className="text-xs text-[#56433a] mb-3 px-3 py-2 rounded-xl" style={{ background: 'rgba(153,66,13,0.04)', borderLeft: '3px solid #dcc1b5' }}>
+                            "{expr.message.length > 100 ? expr.message.slice(0, 100) + '…' : expr.message}"
+                          </p>
+                        )}
+                        <div className="flex items-center justify-between pt-3 border-t border-[#dcc1b5]/50">
+                          <span className="text-xs text-[#56433a]">
+                            {new Date(expr.createdAt).toLocaleDateString('en-RW', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                          {expr.status === 'pending' && (
+                            <button
+                              onClick={() => handleWithdraw(expr._id)}
+                              className="text-xs font-semibold text-[#ba1a1a] hover:underline"
+                            >
+                              Withdraw
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -448,6 +494,48 @@ export default function ProfessionalDashboard() {
 
         </div>
       </main>
+
+      {/* Express Interest Modal */}
+      {interestModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-[#fff8f5] rounded-2xl shadow-xl w-full max-w-md p-7">
+            <div className="flex justify-between items-center mb-2">
+              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '22px', fontWeight: 600, color: '#1e1b18' }}>Express Interest</h3>
+              <button onClick={() => { setInterestModal(null); setModalMessage(''); }} className="text-[#56433a] hover:text-[#99420d]">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <p className="text-sm text-[#56433a] mb-5">{interestModal.title}</p>
+            <div className="flex flex-col gap-1.5 mb-6">
+              <label className="text-sm font-medium text-[#1e1b18]">Message (optional)</label>
+              <textarea
+                rows={4}
+                value={modalMessage}
+                onChange={e => setModalMessage(e.target.value)}
+                placeholder="Introduce yourself to the client. Mention your experience with similar projects…"
+                className="w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors resize-none"
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => { setInterestModal(null); setModalMessage(''); }}
+                className="flex-1 py-3 border border-[#dcc1b5] rounded-xl text-sm font-semibold text-[#56433a] hover:border-[#99420d] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={submittingInterest}
+                onClick={handleSubmitInterest}
+                className="flex-1 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50"
+              >
+                {submittingInterest ? 'Submitting…' : 'Submit Interest'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Certification Modal */}
       {showCertModal && (

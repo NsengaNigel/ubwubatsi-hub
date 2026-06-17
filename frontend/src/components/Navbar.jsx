@@ -13,16 +13,40 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const [unread, setUnread] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [acceptedCount, setAcceptedCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
+
     const fetchUnread = () =>
       api.get('/api/messages/unread-count')
         .then(res => setUnread(res.data.count))
         .catch(() => {});
     fetchUnread();
-    const interval = setInterval(fetchUnread, 30000);
-    return () => clearInterval(interval);
+    const msgInterval = setInterval(fetchUnread, 30000);
+
+    let exprInterval;
+    if (user.role === 'client') {
+      const fetchPending = () =>
+        api.get('/api/expressions/client')
+          .then(res => setPendingCount(res.data.filter(e => e.status === 'pending').length))
+          .catch(() => {});
+      fetchPending();
+      exprInterval = setInterval(fetchPending, 60000);
+    } else if (user.role === 'professional') {
+      const fetchAccepted = () =>
+        api.get('/api/expressions/professional')
+          .then(res => setAcceptedCount(res.data.filter(e => e.status === 'accepted').length))
+          .catch(() => {});
+      fetchAccepted();
+      exprInterval = setInterval(fetchAccepted, 60000);
+    }
+
+    return () => {
+      clearInterval(msgInterval);
+      if (exprInterval) clearInterval(exprInterval);
+    };
   }, [user]);
 
   const navLink = (to, label) => (
@@ -40,7 +64,7 @@ export default function Navbar() {
     ? '/client-settings'
     : user?.role === 'professional'
       ? '/professional-settings'
-      : '/admin-settings';
+      : '/admin/settings';
 
   return (
     <nav className="bg-[#fff8f5] w-full top-0 sticky border-b border-[#dcc1b5] z-50">
@@ -86,7 +110,7 @@ export default function Navbar() {
                 {navLink('/admin', 'Dashboard')}
                 {navLink('/admin/users', 'Users')}
                 {navLink('/admin/projects', 'Projects')}
-                {navLink('/admin-settings', 'Settings')}
+                {navLink('/admin/settings', 'Settings')}
               </>
             )}
           </div>
@@ -95,6 +119,38 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           {user ? (
             <>
+              {/* Client: notification bell for pending expressions */}
+              {user.role === 'client' && (
+                <Link
+                  to="/client-dashboard"
+                  className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
+                  title="Interested Professionals"
+                >
+                  <span className="material-symbols-outlined">notifications</span>
+                  {pendingCount > 0 && (
+                    <span className="absolute top-1 right-1 bg-[#99420d] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                      {pendingCount > 9 ? '9+' : pendingCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+
+              {/* Professional: badge for accepted expressions */}
+              {user.role === 'professional' && (
+                <Link
+                  to="/professional-dashboard"
+                  className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
+                  title="Active Projects"
+                >
+                  <span className="material-symbols-outlined">work</span>
+                  {acceptedCount > 0 && (
+                    <span className="absolute top-1 right-1 bg-[#0e7312] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                      {acceptedCount > 9 ? '9+' : acceptedCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+
               <Link
                 to="/messages"
                 className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors"

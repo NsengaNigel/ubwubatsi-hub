@@ -1,24 +1,30 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
 
 export default function PostProject() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const preferredProfessionalId = state?.preferredProfessionalId || null;
+  const preferredProfessionalName = state?.preferredProfessionalName || null;
+
   const { register, handleSubmit, formState: { isSubmitting } } = useForm();
   const [kubakaLink, setKubakaLink] = useState(null);
 
   const onSubmit = async (data) => {
     try {
       const budget = `${data.budgetMin || '0'} - ${data.budgetMax || '0'} RWF`;
-      const res = await api.post('/api/projects', {
+      const body = {
         title: data.title,
         category: data.category,
         location: data.location,
         budget,
         description: data.description,
-      });
+      };
+      if (preferredProfessionalId) body.preferredProfessionalId = preferredProfessionalId;
+      const res = await api.post('/api/projects', body);
       toast.success('Project posted successfully!');
       setKubakaLink(res.data.kubakaLink);
     } catch (err) {
@@ -88,6 +94,14 @@ export default function PostProject() {
           ) : (
             <div className="card-shell fade-up du-2">
               <div className="card-core" style={{ padding: '36px 40px' }}>
+                {preferredProfessionalName && (
+                  <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl" style={{ background: 'rgba(153,66,13,0.06)', border: '1px solid rgba(153,66,13,0.15)' }}>
+                    <span className="material-symbols-outlined text-[#99420d]" style={{ fontSize: '18px' }}>person_check</span>
+                    <p className="text-sm text-[#56433a]">
+                      Preferred professional: <span className="font-semibold text-[#1e1b18]">{preferredProfessionalName}</span>
+                    </p>
+                  </div>
+                )}
                 <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
 
                   <div className="flex flex-col gap-2">

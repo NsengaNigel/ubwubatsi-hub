@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const Project = require('../models/Project');
-const Expression = require('../models/Expression');
+const ExpressionOfInterest = require('../models/ExpressionOfInterest');
 const auth = require('../middleware/auth');
 
 // POST /api/projects — client posts a new project
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, category, location, budget, description } = req.body;
+    const { title, category, location, budget, description, preferredProfessionalId } = req.body;
     const kubakaLink = `https://kubaka.gov.rw/search?location=${encodeURIComponent(location)}`;
 
     const project = new Project({
@@ -21,6 +21,20 @@ router.post('/', auth, async (req, res) => {
     });
 
     await project.save();
+
+    if (preferredProfessionalId) {
+      try {
+        await ExpressionOfInterest.create({
+          projectId: project._id,
+          professionalId: preferredProfessionalId,
+          clientId: req.user.userId,
+          message: 'Client requested this professional directly',
+        });
+      } catch {
+        // ignore duplicate or invalid id — project still created
+      }
+    }
+
     res.status(201).json(project);
   } catch (error) {
     console.error(error);
@@ -28,12 +42,18 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// GET /api/projects/my-projects — projects posted by the logged-in client
+// GET /api/projects/my-projects — projects posted by the logged-in client with expression counts
 // Static routes must be BEFORE /:id
 router.get('/my-projects', auth, async (req, res) => {
   try {
     const projects = await Project.find({ clientId: req.user.userId }).sort({ createdAt: -1 });
-    res.json(projects);
+    const withCounts = await Promise.all(
+      projects.map(async (proj) => {
+        const expressionCount = await ExpressionOfInterest.countDocuments({ projectId: proj._id });
+        return { ...proj.toObject(), expressionCount };
+      })
+    );
+    res.json(withCounts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error fetching your projects' });
@@ -44,7 +64,7 @@ router.get('/my-projects', auth, async (req, res) => {
 // Static prefix "active" must be before /:id
 router.get('/active/:professionalId', auth, async (req, res) => {
   try {
-    const expressions = await Expression.find({
+    const expressions = await ExpressionOfInterest.find({
       professionalId: req.params.professionalId,
       status: 'accepted',
     });

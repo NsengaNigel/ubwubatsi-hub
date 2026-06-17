@@ -183,10 +183,15 @@ export default function ProfessionalProfile() {
                     <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>send</span>
                     {messaging ? 'Opening...' : 'Send Message'}
                   </button>
-                  <button className="action-btn-outline">
-                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>calendar_month</span>
-                    Request Consultation
-                  </button>
+                  {user?.role === 'client' && (
+                    <button
+                      className="action-btn-outline"
+                      onClick={() => navigate('/post-project', { state: { preferredProfessionalId: id, preferredProfessionalName: pro.fullName } })}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span>
+                      Start Project with {pro.fullName?.split(' ')[0] || 'them'}
+                    </button>
+                  )}
                 </div>
                 {pro.registrationNumber && (
                   <div className="mt-5 pt-5 border-t border-[#dcc1b5]">
