@@ -55,6 +55,7 @@ export default function ClientDashboard() {
   const [expressionsModal, setExpressionsModal] = useState(null);
   const [projectExpressions, setProjectExpressions] = useState([]);
   const [expressionsLoading, setExpressionsLoading] = useState(false);
+  const [messagingPros, setMessagingPros] = useState({});
 
   useEffect(() => {
     api.get('/api/projects/my-projects')
@@ -71,6 +72,17 @@ export default function ClientDashboard() {
       toast.success('Project deleted.');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to delete project.');
+    }
+  };
+
+  const handleMessageProfessional = async (professionalId) => {
+    setMessagingPros(prev => ({ ...prev, [professionalId]: true }));
+    try {
+      const { data: convo } = await api.post('/api/messages/conversation', { receiverId: professionalId });
+      navigate('/messages', { state: { conversationId: convo._id } });
+    } catch {
+      toast.error('Could not open conversation');
+      setMessagingPros(prev => ({ ...prev, [professionalId]: false }));
     }
   };
 
@@ -344,6 +356,16 @@ export default function ClientDashboard() {
                                 Accept
                               </button>
                             </div>
+                          )}
+                          {expr.status === 'accepted' && (
+                            <button
+                              onClick={() => handleMessageProfessional(pro._id || pro)}
+                              disabled={messagingPros[pro._id || pro]}
+                              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-[#99420d] text-white hover:bg-[#7a3409] transition-colors disabled:opacity-50"
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>chat</span>
+                              {messagingPros[pro._id || pro] ? 'Opening…' : 'Message Professional'}
+                            </button>
                           )}
                         </div>
                       </div>

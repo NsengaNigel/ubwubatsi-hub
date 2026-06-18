@@ -48,6 +48,7 @@ export default function ProfessionalDashboard() {
   const [loadingConvos, setLoadingConvos] = useState(true);
   const [loadingCerts, setLoadingCerts] = useState(true);
 
+  const [messagingClients, setMessagingClients] = useState({});
   const [showCertModal, setShowCertModal] = useState(false);
   const certForm = useForm();
 
@@ -86,6 +87,18 @@ export default function ProfessionalDashboard() {
       .catch(() => {})
       .finally(() => setLoadingCerts(false));
   }, [user?.id]);
+
+  const handleMessageClient = async (proj) => {
+    const clientId = proj.clientId?._id || proj.clientId;
+    setMessagingClients(prev => ({ ...prev, [proj._id]: true }));
+    try {
+      const { data: convo } = await api.post('/api/messages/conversation', { receiverId: clientId });
+      navigate('/messages', { state: { conversationId: convo._id } });
+    } catch {
+      toast.error('Could not open conversation');
+      setMessagingClients(prev => ({ ...prev, [proj._id]: false }));
+    }
+  };
 
   const handleOpenModal = (proj) => {
     setInterestModal(proj);
@@ -335,11 +348,12 @@ export default function ProfessionalDashboard() {
                         <span>{proj.budget}</span>
                       </div>
                       <button
-                        onClick={() => navigate('/messages')}
-                        className="w-full py-2.5 rounded-xl border border-[#dcc1b5] text-sm font-semibold text-[#56433a] hover:border-[#99420d] hover:text-[#99420d] transition-colors flex items-center justify-center gap-2"
+                        onClick={() => handleMessageClient(proj)}
+                        disabled={messagingClients[proj._id]}
+                        className="w-full py-2.5 rounded-xl border border-[#dcc1b5] text-sm font-semibold text-[#56433a] hover:border-[#99420d] hover:text-[#99420d] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>chat</span>
-                        Message Client
+                        {messagingClients[proj._id] ? 'Opening…' : 'Message Client'}
                       </button>
                     </div>
                   </div>

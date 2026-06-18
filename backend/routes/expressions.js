@@ -4,6 +4,7 @@ const ExpressionOfInterest = require('../models/ExpressionOfInterest');
 const Project = require('../models/Project');
 const Professional = require('../models/Professional');
 const auth = require('../middleware/auth');
+const createNotification = require('../utils/createNotification');
 
 // GET /api/expressions/professional — all expressions for the logged-in professional
 router.get('/professional', auth, async (req, res) => {
@@ -97,6 +98,15 @@ router.post('/', auth, async (req, res) => {
     await expression.save();
 
     const populated = await expression.populate('projectId', 'title location budget category');
+
+    await createNotification(
+      project.clientId,
+      'expression_of_interest',
+      'New Interest in Your Project',
+      `${req.user.fullName} has expressed interest in your project "${project.title}"`,
+      '/client-dashboard'
+    );
+
     res.status(201).json(populated);
   } catch (error) {
     if (error.code === 11000) {
@@ -132,6 +142,14 @@ router.put('/:id/accept', auth, async (req, res) => {
     project.status = 'in-progress';
     await project.save();
 
+    await createNotification(
+      expression.professionalId,
+      'expression_accepted',
+      'Your Interest Was Accepted',
+      `${req.user.fullName} has accepted your interest in "${project.title}". You can now message them.`,
+      '/professional-dashboard'
+    );
+
     res.json(expression);
   } catch (error) {
     console.error(error);
@@ -154,6 +172,14 @@ router.put('/:id/reject', auth, async (req, res) => {
 
     expression.status = 'rejected';
     await expression.save();
+
+    await createNotification(
+      expression.professionalId,
+      'expression_rejected',
+      'Your Interest Was Not Accepted',
+      `${req.user.fullName} has reviewed your interest in "${project.title}"`,
+      '/professional-dashboard'
+    );
 
     res.json(expression);
   } catch (error) {

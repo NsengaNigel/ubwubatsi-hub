@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const Project = require('../models/Project');
 const auth = require('../middleware/auth');
+const createNotification = require('../utils/createNotification');
 
 function requireAdmin(req, res, next) {
   if (req.user?.role !== 'admin') {
@@ -148,6 +149,15 @@ router.put('/verify/:id', async (req, res) => {
       { returnDocument: 'after', select: '-password' }
     );
     if (!user) return res.status(404).json({ message: 'User not found' });
+
+    await createNotification(
+      req.params.id,
+      'profile_verified',
+      'Profile Verified',
+      'Your profile has been verified. You can now browse and apply to projects.',
+      '/professional-dashboard'
+    );
+
     res.json({ message: 'Professional verified successfully', user });
   } catch (error) {
     console.error(error);

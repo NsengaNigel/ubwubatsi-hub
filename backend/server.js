@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { Server } = require('socket.io');
+const { setIO } = require('./utils/socketIo');
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ const io = new Server(server, {
     methods: ['GET', 'POST'],
   },
 });
+
+setIO(io);
 
 app.use(cors());
 app.use(express.json());
@@ -32,6 +35,7 @@ const uploadRoutes = require('./routes/upload');
 const messageRoutes = require('./routes/messages');
 const userRoutes = require('./routes/users');
 const expressionRoutes = require('./routes/expressions');
+const notificationRoutes = require('./routes/notifications');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
@@ -41,12 +45,17 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/expressions', expressionRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Ubwubatsi Hub API is running' });
 });
 
 io.on('connection', (socket) => {
+  socket.on('join_user_room', (userId) => {
+    socket.join(userId);
+  });
+
   socket.on('join_conversation', (conversationId) => {
     socket.join(conversationId);
   });

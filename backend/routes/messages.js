@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
+const Notification = require('../models/Notification');
 const auth = require('../middleware/auth');
+const createNotification = require('../utils/createNotification');
 
 // GET /api/messages/unread-count — must be before /:conversationId
 router.get('/unread-count', auth, async (req, res) => {
@@ -111,6 +113,24 @@ router.post('/:conversationId', auth, async (req, res) => {
     conversation.lastMessage = req.body.content;
     conversation.lastMessageAt = new Date();
     await conversation.save();
+
+    // Notify receiver — skip if there's already an unread new_message notif in the last 5 minutes
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const recentNotif = await Notification.findOne({
+      userId: receiverId,
+      type: 'new_message',
+      read: false,
+      createdAt: { $gte: fiveMinutesAgo },
+    });
+    if (!recentNotif) {
+      await createNotification(
+        receiverId,
+        'new_message',
+        'New Message',
+        `${req.user.fullName} sent you a message`,
+        '/messages'
+      );
+    }
 
     res.status(201).json(message);
   } catch (error) {

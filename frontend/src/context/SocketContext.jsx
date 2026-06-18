@@ -13,6 +13,11 @@ export function SocketProvider({ children }) {
     if (user) {
       const s = io('http://localhost:5000', { transports: ['websocket'] });
       socketRef.current = s;
+
+      s.on('connect', () => {
+        s.emit('join_user_room', user.id);
+      });
+
       setSocket(s);
 
       return () => {
