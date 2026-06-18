@@ -17,21 +17,27 @@ export default function Navbar() {
   const { pathname } = useLocation();
 
   const [notifCount, setNotifCount] = useState(0);
+  const [unread, setUnread] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const notifRef = useRef(null);
   const profileRef = useRef(null);
 
-  // Poll notification unread count every 30s
+  // Poll notification unread count and message unread count every 30s
   useEffect(() => {
     if (!user) return;
-    const fetchCount = () =>
+    const fetchNotifs = () =>
       api.get('/api/notifications/unread-count')
         .then(res => setNotifCount(res.data.count))
         .catch(() => {});
-    fetchCount();
-    const interval = setInterval(fetchCount, 30000);
+    const fetchMessages = () =>
+      api.get('/api/messages/unread-count')
+        .then(res => setUnread(res.data.count))
+        .catch(() => {});
+    fetchNotifs();
+    fetchMessages();
+    const interval = setInterval(() => { fetchNotifs(); fetchMessages(); }, 30000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -71,7 +77,7 @@ export default function Navbar() {
   const profileMenuItems =
     user?.role === 'client'
       ? [
-          { label: 'My Profile', to: '/client-dashboard', icon: 'person' },
+          { label: 'My Profile', to: '/client-profile', icon: 'person' },
           { label: 'Settings', to: '/client-settings', icon: 'settings' },
           { label: 'Messages', to: '/messages', icon: 'chat' },
         ]
@@ -163,10 +169,15 @@ export default function Navbar() {
               {/* Messages */}
               <Link
                 to="/messages"
-                className="p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
+                className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
                 title="Messages"
               >
                 <span className="material-symbols-outlined">chat</span>
+                {unread > 0 && (
+                  <span className="absolute top-1 right-1 bg-[#99420d] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                    {unread > 9 ? '9+' : unread}
+                  </span>
+                )}
               </Link>
 
               {/* First name */}

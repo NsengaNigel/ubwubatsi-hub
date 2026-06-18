@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import PendingVerification from './pages/PendingVerification';
 import ClientDashboard from './pages/ClientDashboard';
+import ClientProfile from './pages/ClientProfile';
 import ClientSettings from './pages/ClientSettings';
 import PostProject from './pages/PostProject';
 import EditProject from './pages/EditProject';
@@ -54,6 +55,7 @@ export default function App() {
             {/* Protected */}
             <Route path="/pending-verification" element={<ProtectedRoute><PendingVerification /></ProtectedRoute>} />
             <Route path="/client-dashboard" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
+            <Route path="/client-profile" element={<ProtectedRoute><ClientProfile /></ProtectedRoute>} />
             <Route path="/client-settings" element={<ProtectedRoute><ClientSettings /></ProtectedRoute>} />
             <Route path="/post-project" element={<ProtectedRoute><PostProject /></ProtectedRoute>} />
             <Route path="/edit-project/:id" element={<ProtectedRoute><EditProject /></ProtectedRoute>} />
