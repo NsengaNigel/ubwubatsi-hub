@@ -36,6 +36,7 @@ const messageRoutes = require('./routes/messages');
 const userRoutes = require('./routes/users');
 const expressionRoutes = require('./routes/expressions');
 const notificationRoutes = require('./routes/notifications');
+const ratingRoutes = require('./routes/ratings');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
@@ -46,6 +47,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/expressions', expressionRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/ratings', ratingRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Ubwubatsi Hub API is running' });

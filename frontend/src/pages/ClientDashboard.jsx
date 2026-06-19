@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
+import ProjectCompletionPanel from '../components/ProjectCompletionPanel';
+import RatingModal from '../components/RatingModal';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -52,17 +54,45 @@ export default function ClientDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [canRateMap, setCanRateMap] = useState({});
+
   const [expressionsModal, setExpressionsModal] = useState(null);
   const [projectExpressions, setProjectExpressions] = useState([]);
   const [expressionsLoading, setExpressionsLoading] = useState(false);
   const [messagingPros, setMessagingPros] = useState({});
 
+  const [ratingModal, setRatingModal] = useState(null);
+
   useEffect(() => {
     api.get('/api/projects/my-projects')
-      .then(res => setProjects(res.data))
+      .then(res => {
+        setProjects(res.data);
+        // Fetch can-rate for all completed projects
+        const completed = res.data.filter(p => p.status === 'completed');
+        if (completed.length > 0) {
+          Promise.all(
+            completed.map(p =>
+              api.get(`/api/ratings/can-rate/${p._id}`)
+                .then(r => [p._id, r.data])
+                .catch(() => [p._id, { canRate: false }])
+            )
+          ).then(results => {
+            const map = {};
+            results.forEach(([id, data]) => { map[id] = data; });
+            setCanRateMap(map);
+          });
+        }
+      })
       .catch(() => setError('Could not load your projects.'))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleComplete = (projectId) => {
+    setProjects(prev => prev.map(p => p._id === projectId ? { ...p, status: 'completed' } : p));
+    api.get(`/api/ratings/can-rate/${projectId}`)
+      .then(res => setCanRateMap(prev => ({ ...prev, [projectId]: res.data })))
+      .catch(() => {});
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this project? This cannot be undone.')) return;
@@ -104,9 +134,9 @@ export default function ClientDashboard() {
       await api.put(`/api/expressions/${exprId}/accept`);
       const res = await api.get(`/api/expressions/project/${expressionsModal._id}`);
       setProjectExpressions(res.data);
-      setProjects(prev =>
-        prev.map(p => p._id === expressionsModal._id ? { ...p, status: 'in-progress' } : p)
-      );
+      // Re-fetch this project to get acceptedProfessional
+      const projRes = await api.get('/api/projects/my-projects');
+      setProjects(projRes.data);
       toast.success('Professional accepted! Project is now in progress.');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to accept');
@@ -200,61 +230,84 @@ export default function ClientDashboard() {
           )}
 
           {!loading && !error && projects.length > 0 && (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               {projects.map((proj) => {
                 const badge = STATUS_STYLES[proj.status] || STATUS_STYLES.open;
                 const exprCount = proj.expressionCount || 0;
+                const hasPanel = (proj.status === 'in-progress' || proj.status === 'completed') && proj.acceptedProfessional;
+                const canRate = canRateMap[proj._id]?.canRate || false;
+                const alreadyRated = canRateMap[proj._id]?.alreadyRated || false;
+
                 return (
-                  <div key={proj._id} className="project-item fade-up du-4">
-                    <div className="flex items-start gap-4 flex-1 min-w-0">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(153,66,13,0.08)' }}>
-                        <span className="material-symbols-outlined text-[#99420d]" style={{ fontSize: '20px' }}>architecture</span>
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-base font-semibold text-[#1e1b18]">{proj.title}</h4>
-                        <div className="flex flex-wrap items-center gap-3 mt-0.5 text-sm text-[#56433a]">
-                          <span className="flex items-center gap-1">
-                            <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>calendar_today</span>
-                            {formatDate(proj.createdAt)}
-                          </span>
-                          <span>{proj.location}, Rwanda</span>
-                          <span>{proj.category}</span>
+                  <div key={proj._id} className="flex flex-col gap-2 fade-up du-4">
+                    {/* Project row */}
+                    <div className="project-item">
+                      <div className="flex items-start gap-4 flex-1 min-w-0">
+                        <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(153,66,13,0.08)' }}>
+                          <span className="material-symbols-outlined text-[#99420d]" style={{ fontSize: '20px' }}>architecture</span>
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-base font-semibold text-[#1e1b18]">{proj.title}</h4>
+                          <div className="flex flex-wrap items-center gap-3 mt-0.5 text-sm text-[#56433a]">
+                            <span className="flex items-center gap-1">
+                              <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>calendar_today</span>
+                              {formatDate(proj.createdAt)}
+                            </span>
+                            <span>{proj.location}, Rwanda</span>
+                            <span>{proj.category}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
-                      <span className="status-badge" style={{ background: badge.background, color: badge.color }}>{badge.label}</span>
-                      <span className="text-sm font-medium text-[#56433a]">{proj.budget}</span>
-                      <button
-                        onClick={() => handleOpenExpressions(proj)}
-                        className="relative flex items-center gap-1.5 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
-                        style={{ letterSpacing: '0.04em' }}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>people</span>
-                        Interested Professionals
-                        {exprCount > 0 && (
-                          <span className="ml-1 bg-[#99420d] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
-                            {exprCount > 9 ? '9+' : exprCount}
-                          </span>
+                      <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                        <span className="status-badge" style={{ background: badge.background, color: badge.color }}>{badge.label}</span>
+                        <span className="text-sm font-medium text-[#56433a]">{proj.budget}</span>
+                        <button
+                          onClick={() => handleOpenExpressions(proj)}
+                          className="relative flex items-center gap-1.5 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
+                          style={{ letterSpacing: '0.04em' }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>people</span>
+                          Interested Professionals
+                          {exprCount > 0 && (
+                            <span className="ml-1 bg-[#99420d] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                              {exprCount > 9 ? '9+' : exprCount}
+                            </span>
+                          )}
+                        </button>
+                        {proj.status !== 'completed' && (
+                          <Link
+                            to={`/edit-project/${proj._id}`}
+                            className="flex items-center gap-1 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
+                            style={{ letterSpacing: '0.04em', textDecoration: 'none' }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>edit</span>
+                            Edit
+                          </Link>
                         )}
-                      </button>
-                      <Link
-                        to={`/edit-project/${proj._id}`}
-                        className="flex items-center gap-1 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
-                        style={{ letterSpacing: '0.04em', textDecoration: 'none' }}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>edit</span>
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(proj._id)}
-                        className="flex items-center gap-1 text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
-                        style={{ letterSpacing: '0.04em', background: 'transparent', cursor: 'pointer' }}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>delete</span>
-                        Delete
-                      </button>
+                        <button
+                          onClick={() => handleDelete(proj._id)}
+                          className="flex items-center gap-1 text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
+                          style={{ letterSpacing: '0.04em', background: 'transparent', cursor: 'pointer' }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>delete</span>
+                          Delete
+                        </button>
+                      </div>
                     </div>
+
+                    {/* Completion panel */}
+                    {hasPanel && (
+                      <ProjectCompletionPanel
+                        project={proj}
+                        canRate={canRate}
+                        alreadyRated={alreadyRated}
+                        onComplete={handleComplete}
+                        onRateClick={() => setRatingModal({
+                          project: proj,
+                          professionalName: proj.acceptedProfessional?.fullName,
+                        })}
+                      />
+                    )}
                   </div>
                 );
               })}
@@ -271,7 +324,6 @@ export default function ClientDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
           <div className="bg-[#fff8f5] rounded-2xl shadow-xl w-full max-w-lg flex flex-col" style={{ maxHeight: '85vh' }}>
 
-            {/* Modal header */}
             <div className="flex justify-between items-start p-6 pb-4 border-b border-[#dcc1b5]">
               <div>
                 <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600, color: '#1e1b18' }}>
@@ -284,7 +336,6 @@ export default function ClientDashboard() {
               </button>
             </div>
 
-            {/* Modal body */}
             <div className="overflow-y-auto flex-1 p-6">
               {expressionsLoading ? (
                 <div className="flex justify-center py-10">
@@ -321,13 +372,14 @@ export default function ClientDashboard() {
                                 {expr.status}
                               </span>
                             </div>
-                            {profile.specialty && (
-                              <p className="text-xs text-[#56433a] mt-0.5">{profile.specialty}</p>
-                            )}
+                            {profile.specialty && <p className="text-xs text-[#56433a] mt-0.5">{profile.specialty}</p>}
                             {profile.averageRating > 0 && (
                               <div className="flex items-center gap-0.5 mt-0.5">
                                 <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '12px' }}>star</span>
                                 <span className="text-xs text-[#56433a]">{profile.averageRating.toFixed(1)}</span>
+                                {profile.totalReviews > 0 && (
+                                  <span className="text-xs text-[#56433a]">({profile.totalReviews})</span>
+                                )}
                               </div>
                             )}
                           </div>
@@ -376,6 +428,21 @@ export default function ClientDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Rating Modal */}
+      {ratingModal && (
+        <RatingModal
+          project={ratingModal.project}
+          professionalName={ratingModal.professionalName}
+          onClose={() => setRatingModal(null)}
+          onSuccess={() => {
+            setCanRateMap(prev => ({
+              ...prev,
+              [ratingModal.project._id]: { canRate: false, alreadyRated: true },
+            }));
+          }}
+        />
       )}
     </div>
   );

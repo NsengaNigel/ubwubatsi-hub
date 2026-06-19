@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import StarRating from '../components/StarRating';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -48,6 +49,10 @@ export default function ProfessionalDashboard() {
   const [loadingConvos, setLoadingConvos] = useState(true);
   const [loadingCerts, setLoadingCerts] = useState(true);
 
+  const [ratings, setRatings] = useState([]);
+  const [loadingRatings, setLoadingRatings] = useState(true);
+  const [myProfile, setMyProfile] = useState(null);
+
   const [messagingClients, setMessagingClients] = useState({});
   const [showCertModal, setShowCertModal] = useState(false);
   const certForm = useForm();
@@ -83,9 +88,17 @@ export default function ProfessionalDashboard() {
       .finally(() => setLoadingConvos(false));
 
     api.get('/api/professionals/my-profile')
-      .then(res => setCertifications(res.data.certifications || []))
+      .then(res => {
+        setCertifications(res.data.certifications || []);
+        setMyProfile(res.data);
+      })
       .catch(() => {})
       .finally(() => setLoadingCerts(false));
+
+    api.get(`/api/ratings/professional/${user.id}`)
+      .then(res => setRatings(res.data))
+      .catch(() => {})
+      .finally(() => setLoadingRatings(false));
   }, [user?.id]);
 
   const handleMessageClient = async (proj) => {
@@ -458,6 +471,65 @@ export default function ProfessionalDashboard() {
                     </Link>
                   );
                 })}
+              </div>
+            )}
+          </section>
+
+          {/* Reviews */}
+          <section className="fade-up du-6">
+            <div className="flex items-end justify-between border-b border-[#dcc1b5] pb-3 mb-6 flex-wrap gap-3">
+              <div>
+                <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>Client Reviews</h3>
+                {myProfile?.averageRating > 0 && (
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <StarRating value={Math.round(myProfile.averageRating)} readOnly size="md" />
+                    <span className="text-lg font-semibold text-[#1e1b18]">{myProfile.averageRating.toFixed(1)}</span>
+                    <span className="text-sm text-[#56433a]">
+                      ({myProfile.totalReviews} review{myProfile.totalReviews !== 1 ? 's' : ''})
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {loadingRatings ? (
+              <div className="flex justify-center py-10">
+                <div className="w-7 h-7 border-2 border-[#dcc1b5] border-t-[#99420d] rounded-full animate-spin" />
+              </div>
+            ) : ratings.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 py-12 text-center">
+                <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '48px' }}>reviews</span>
+                <p className="text-base text-[#56433a]">No reviews yet. Complete projects to receive feedback from clients.</p>
+              </div>
+            ) : (
+              <div className="border border-[#dcc1b5] rounded-2xl overflow-hidden divide-y divide-[#dcc1b5]">
+                {ratings.slice(0, 5).map(r => (
+                  <div key={r._id} className="flex gap-4 px-5 py-4">
+                    <div className="review-avatar flex-shrink-0" style={{ background: 'rgba(153,66,13,0.1)' }}>
+                      {r.clientId?.profilePicture ? (
+                        <img src={r.clientId.profilePicture} alt="" className="w-full h-full object-cover rounded-full" />
+                      ) : (
+                        <span style={{ color: '#99420d', fontSize: '13px', fontWeight: 700 }}>
+                          {getInitials(r.clientId?.fullName)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-3 mb-1 flex-wrap">
+                        <span className="text-sm font-semibold text-[#1e1b18]">{r.clientId?.fullName || 'Client'}</span>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <StarRating value={r.score} readOnly size="sm" />
+                          <span className="text-xs text-[#56433a]">
+                            {new Date(r.createdAt).toLocaleDateString('en-RW', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                      </div>
+                      {r.review && (
+                        <p className="text-sm text-[#56433a] leading-relaxed">{r.review}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </section>

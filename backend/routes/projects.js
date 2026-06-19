@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Project = require('../models/Project');
 const ExpressionOfInterest = require('../models/ExpressionOfInterest');
+const Professional = require('../models/Professional');
 const auth = require('../middleware/auth');
+const createNotification = require('../utils/createNotification');
 
 // POST /api/projects — client posts a new project
 router.post('/', auth, async (req, res) => {
@@ -42,18 +44,45 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// GET /api/projects/my-projects — projects posted by the logged-in client with expression counts
+// GET /api/projects/my-projects — projects posted by the logged-in client with expression counts + accepted professional
 // Static routes must be BEFORE /:id
 router.get('/my-projects', auth, async (req, res) => {
   try {
     const projects = await Project.find({ clientId: req.user.userId }).sort({ createdAt: -1 });
-    const withCounts = await Promise.all(
+    const withData = await Promise.all(
       projects.map(async (proj) => {
-        const expressionCount = await ExpressionOfInterest.countDocuments({ projectId: proj._id });
-        return { ...proj.toObject(), expressionCount };
+        const expressionCount = await ExpressionOfInterest.countDocuments({
+          projectId: proj._id,
+          status: 'pending',
+        });
+
+        let acceptedProfessional = null;
+        if (proj.status === 'in-progress' || proj.status === 'completed') {
+          const accepted = await ExpressionOfInterest.findOne({
+            projectId: proj._id,
+            status: 'accepted',
+          }).populate('professionalId', 'fullName profilePicture isVerified');
+
+          if (accepted && accepted.professionalId) {
+            const profDoc = await Professional.findOne({ userId: accepted.professionalId._id })
+              .select('specialty averageRating totalReviews');
+            acceptedProfessional = {
+              userId: accepted.professionalId._id,
+              fullName: accepted.professionalId.fullName,
+              profilePicture: accepted.professionalId.profilePicture,
+              isVerified: accepted.professionalId.isVerified,
+              specialty: profDoc?.specialty || null,
+              averageRating: profDoc?.averageRating || 0,
+              totalReviews: profDoc?.totalReviews || 0,
+              expressionId: accepted._id,
+            };
+          }
+        }
+
+        return { ...proj.toObject(), expressionCount, acceptedProfessional };
       })
     );
-    res.json(withCounts);
+    res.json(withData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error fetching your projects' });
@@ -101,6 +130,42 @@ router.get('/:id', auth, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error fetching project' });
+  }
+});
+
+// PUT /api/projects/:id/complete — client marks project complete (must be before /:id)
+router.put('/:id/complete', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'client') {
+      return res.status(403).json({ message: 'Only clients can mark projects as complete' });
+    }
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    if (project.clientId.toString() !== req.user.userId) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    if (project.status !== 'in-progress') {
+      return res.status(400).json({ message: 'Only in-progress projects can be marked complete' });
+    }
+
+    project.status = 'completed';
+    await project.save();
+
+    const accepted = await ExpressionOfInterest.findOne({ projectId: project._id, status: 'accepted' });
+    if (accepted) {
+      await createNotification(
+        accepted.professionalId,
+        'project_in_progress',
+        'Project Marked Complete',
+        `${req.user.fullName} has marked "${project.title}" as completed. You can now receive a review.`,
+        '/professional-dashboard'
+      );
+    }
+
+    res.json(project);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

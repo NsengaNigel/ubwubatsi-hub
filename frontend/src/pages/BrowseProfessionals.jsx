@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import Navbar from '../components/Navbar';
+import StarRating from '../components/StarRating';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -12,8 +14,7 @@ function getInitials(name) {
 const FILTERS = ['All', 'Architect', 'Civil Engineer'];
 
 export default function BrowseProfessionals() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [professionals, setProfessionals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,39 +39,7 @@ export default function BrowseProfessionals() {
 
   return (
     <div className="bg-[#fff8f5] text-[#1e1b18] min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-[#fff8f5] w-full top-0 sticky border-b border-[#dcc1b5] z-50">
-        <div className="flex justify-between items-center h-20 px-4 md:px-10 max-w-[1280px] mx-auto">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</Link>
-            <div className="hidden md:flex relative ml-8">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#56433a]">search</span>
-              <input
-                className="bg-[#fff8f5] border border-[#dcc1b5] rounded-full py-2 pl-10 pr-4 w-64 focus:border-[#99420d] outline-none text-sm transition-all"
-                placeholder="Search experts, skills..."
-                type="text"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-            </div>
-          </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/browse-professionals" className="text-[#99420d] font-bold border-b-2 border-[#99420d] pb-1 text-sm">Find Experts</Link>
-            <Link to="/post-project" className="text-[#56433a] hover:text-[#99420d] transition-colors text-sm">Projects</Link>
-            <a href="/#how-it-works" className="text-[#56433a] hover:text-[#99420d] transition-colors text-sm">How it Works</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            {user ? (
-              <button className="nav-avatar" onClick={() => { logout(); navigate('/'); }}>{getInitials(user.fullName)}</button>
-            ) : (
-              <>
-                <Link to="/login" className="hidden md:block text-sm font-semibold text-[#56433a] hover:text-[#99420d] transition-colors">Login</Link>
-                <Link to="/register" className="nav-register">Register</Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-10">
 
@@ -94,11 +63,24 @@ export default function BrowseProfessionals() {
               Rwanda's verified construction professionals — checked credentials, real projects.
             </p>
           </div>
-          {!loading && !error && (
-            <p className="text-sm text-[#56433a] shrink-0 fade-up du-2">
-              Showing <strong className="font-medium text-[#1e1b18]">{filtered.length}</strong> professionals
-            </p>
-          )}
+          <div className="flex flex-col items-start md:items-end gap-3 fade-up du-2">
+            {/* Search */}
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#56433a]" style={{ fontSize: '18px' }}>search</span>
+              <input
+                className="bg-[#fff8f5] border border-[#dcc1b5] rounded-full py-2 pl-10 pr-4 w-64 focus:border-[#99420d] outline-none text-sm transition-all"
+                placeholder="Search experts, skills..."
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            {!loading && !error && (
+              <p className="text-sm text-[#56433a]">
+                Showing <strong className="font-medium text-[#1e1b18]">{filtered.length}</strong> professionals
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Filter bar */}
@@ -136,25 +118,41 @@ export default function BrowseProfessionals() {
               <div key={pro._id} className="browse-card-shell fade-up" style={{ animationDelay: `${(i + 4) * 70}ms` }}>
                 <div className="browse-card-core">
                   <div className="card-avatar-band" style={{ background: 'rgba(153,66,13,0.04)' }}>
-                    <span className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>
-                      {getInitials(pro.userId?.fullName)}
-                    </span>
+                    {pro.userId?.profilePicture ? (
+                      <img
+                        src={pro.userId.profilePicture}
+                        alt={pro.userId.fullName}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '22px' }}>
+                        {getInitials(pro.userId?.fullName)}
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1 p-5">
                     <div className="flex justify-between items-start gap-3">
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex items-center gap-1.5 mb-0.5">
-                          <h3 className="text-sm font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }}>{pro.userId?.fullName}</h3>
-                          <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '15px' }} title="Verified">verified</span>
+                          <h3 className="text-sm font-semibold text-[#1e1b18] truncate" style={{ letterSpacing: '0.05em' }}>
+                            {pro.userId?.fullName}
+                          </h3>
+                          <span className="material-symbols-outlined fill text-[#99420d] flex-shrink-0" style={{ fontSize: '15px' }} title="Verified">verified</span>
                         </div>
-                        <p className="text-sm text-[#56433a]">
-                          {pro.specialty || 'Construction Professional'}
-                          {pro.averageRating > 0 && (
-                            <> &nbsp;·&nbsp; <span className="text-[#99420d] font-medium">{pro.averageRating.toFixed(1)}</span></>
-                          )}
-                        </p>
+                        <p className="text-sm text-[#56433a]">{pro.specialty || 'Construction Professional'}</p>
+                        {pro.averageRating > 0 ? (
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                            <StarRating value={Math.round(pro.averageRating)} readOnly size="sm" />
+                            <span className="text-xs text-[#56433a]">
+                              {pro.averageRating.toFixed(1)}
+                              {pro.totalReviews > 0 && ` (${pro.totalReviews})`}
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-[#897268] mt-1.5">No reviews yet</p>
+                        )}
                       </div>
-                      <Link to={`/professional/${pro._id}`} className="view-btn">
+                      <Link to={`/professional/${pro._id}`} className="view-btn flex-shrink-0">
                         View
                         <span className="view-btn-icon">
                           <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>arrow_forward</span>

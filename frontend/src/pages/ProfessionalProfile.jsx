@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import Navbar from '../components/Navbar';
+import StarRating from '../components/StarRating';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -10,8 +12,18 @@ function getInitials(name) {
   return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
 }
 
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days < 1) return 'Today';
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+  return `${Math.floor(months / 12)}y ago`;
+}
+
 export default function ProfessionalProfile() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -20,11 +32,19 @@ export default function ProfessionalProfile() {
   const [error, setError] = useState(null);
   const [messaging, setMessaging] = useState(false);
 
+  const [ratings, setRatings] = useState([]);
+  const [ratingsLoading, setRatingsLoading] = useState(true);
+
   useEffect(() => {
     api.get(`/api/professionals/${id}`)
       .then(res => setProfile(res.data))
       .catch(() => setError('Could not load this profile.'))
       .finally(() => setLoading(false));
+
+    api.get(`/api/ratings/professional/${id}`)
+      .then(res => setRatings(res.data))
+      .catch(() => {})
+      .finally(() => setRatingsLoading(false));
   }, [id]);
 
   const handleSendMessage = async () => {
@@ -43,29 +63,12 @@ export default function ProfessionalProfile() {
   const pro = profile?.userId || {};
   const initials = getInitials(pro.fullName);
 
+  const avgRating = profile?.averageRating || 0;
+  const totalReviews = profile?.totalReviews || 0;
+
   return (
     <div className="bg-[#fff8f5] text-[#1e1b18] min-h-screen flex flex-col">
-      {/* Nav */}
-      <nav className="bg-[#fff8f5] w-full top-0 sticky border-b border-[#dcc1b5] z-50">
-        <div className="flex justify-between items-center h-20 px-4 md:px-10 max-w-[1280px] mx-auto">
-          <Link to="/" className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</Link>
-          <div className="hidden md:flex items-center gap-6">
-            <Link to="/browse-professionals" className="text-[#99420d] font-medium border-b-2 border-[#99420d] pb-0.5 text-base">Find Experts</Link>
-            <Link to="/post-project" className="text-[#56433a] hover:text-[#99420d] transition-colors text-base">Projects</Link>
-            <a href="/#how-it-works" className="text-[#56433a] hover:text-[#99420d] transition-colors text-base">How it Works</a>
-          </div>
-          <div className="flex items-center gap-3">
-            {user ? (
-              <button className="nav-avatar" onClick={() => { logout(); navigate('/'); }}>{getInitials(user.fullName)}</button>
-            ) : (
-              <>
-                <Link to="/login" className="hidden md:block text-sm font-semibold text-[#56433a] hover:text-[#99420d] transition-colors">Login</Link>
-                <Link to="/register" className="nav-register">Register</Link>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {loading && (
         <div className="flex-1 flex items-center justify-center py-20">
@@ -88,7 +91,7 @@ export default function ProfessionalProfile() {
 
             {/* Profile header */}
             <div className="profile-header fade-up du-1">
-              <div className="h-36 md:h-48 bg-[#efe6e2]" />
+              <div className="h-36 md:h-48 rounded-t-2xl" style={{ background: 'linear-gradient(135deg, #efe6e2 0%, #dcc1b5 100%)' }} />
               <div className="px-7 pb-7 -mt-12 flex flex-col sm:flex-row gap-5 items-start sm:items-end">
                 <div className="profile-avatar overflow-hidden">
                   {pro.profilePicture ? (
@@ -113,10 +116,10 @@ export default function ProfessionalProfile() {
                         <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>location_on</span>{profile.location}
                       </span>
                     )}
-                    {profile.averageRating > 0 && (
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined fill" style={{ fontSize: '16px' }}>star</span>
-                        {profile.averageRating.toFixed(1)} · {profile.totalReviews} Reviews
+                    {avgRating > 0 && (
+                      <span className="flex items-center gap-1.5">
+                        <StarRating value={Math.round(avgRating)} readOnly size="sm" />
+                        <span>{avgRating.toFixed(1)} · {totalReviews} review{totalReviews !== 1 ? 's' : ''}</span>
                       </span>
                     )}
                   </div>
@@ -158,12 +161,63 @@ export default function ProfessionalProfile() {
             {/* Reviews */}
             <div className="section-shell fade-up du-4">
               <div className="section-core">
-                <h2 className="text-[#1e1b18] mb-4" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>Client Feedback</h2>
-                <p className="text-sm text-[#56433a] mb-5">Based on verified project completions.</p>
-                <div className="flex flex-col items-center gap-3 py-8 text-center">
-                  <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '48px' }}>rate_review</span>
-                  <p className="text-base text-[#56433a]">No reviews yet.</p>
+                <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
+                  <div>
+                    <h2 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>Client Feedback</h2>
+                    <p className="text-sm text-[#56433a] mt-0.5">Based on verified project completions.</p>
+                  </div>
+                  {avgRating > 0 && (
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="flex items-baseline gap-2">
+                        <span style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '36px', fontWeight: 700, color: '#1e1b18', lineHeight: 1 }}>
+                          {avgRating.toFixed(1)}
+                        </span>
+                        <span className="text-sm text-[#56433a]">/ 5</span>
+                      </div>
+                      <StarRating value={Math.round(avgRating)} readOnly size="md" />
+                      <span className="text-xs text-[#56433a]">{totalReviews} review{totalReviews !== 1 ? 's' : ''}</span>
+                    </div>
+                  )}
                 </div>
+
+                {ratingsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="w-6 h-6 border-2 border-[#dcc1b5] border-t-[#99420d] rounded-full animate-spin" />
+                  </div>
+                ) : ratings.length === 0 ? (
+                  <div className="flex flex-col items-center gap-3 py-8 text-center">
+                    <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '48px' }}>rate_review</span>
+                    <p className="text-base text-[#56433a]">No reviews yet.</p>
+                  </div>
+                ) : (
+                  <div>
+                    {ratings.map((r, i) => (
+                      <div key={r._id} className="review-item" style={{ paddingTop: i === 0 ? 0 : undefined }}>
+                        <div className="review-avatar" style={{ background: 'rgba(153,66,13,0.1)' }}>
+                          {r.clientId?.profilePicture ? (
+                            <img src={r.clientId.profilePicture} alt="" className="w-full h-full object-cover rounded-full" />
+                          ) : (
+                            <span style={{ color: '#99420d', fontSize: '13px', fontWeight: 700 }}>
+                              {getInitials(r.clientId?.fullName)}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-3 mb-1 flex-wrap">
+                            <span className="text-sm font-semibold text-[#1e1b18]">{r.clientId?.fullName || 'Client'}</span>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <StarRating value={r.score} readOnly size="sm" />
+                              <span className="text-xs text-[#56433a]">{timeAgo(r.createdAt)}</span>
+                            </div>
+                          </div>
+                          {r.review && (
+                            <p className="text-sm text-[#56433a] leading-relaxed">{r.review}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
