@@ -11,7 +11,7 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     if (user) {
-      const s = io('http://localhost:5000', { transports: ['websocket'] });
+      const s = io('https://ubwubatsi-hub.onrender.com', { transports: ['websocket'] });
       socketRef.current = s;
 
       s.on('connect', () => {
