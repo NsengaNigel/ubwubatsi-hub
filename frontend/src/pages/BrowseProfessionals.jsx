@@ -44,7 +44,7 @@ export default function BrowseProfessionals() {
       <main className="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-10">
 
         {/* Page header */}
-        <div className="pt-12 pb-8 md:pt-16 md:pb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="pt-8 pb-6 md:pt-16 md:pb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="fade-up du-1">
             <span
               className="inline-flex items-center gap-1.5 mb-4"
@@ -54,8 +54,8 @@ export default function BrowseProfessionals() {
               Professionals
             </span>
             <h1
-              className="text-[#1e1b18]"
-              style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '48px', letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}
+              className="text-[#1e1b18] text-3xl md:text-5xl"
+              style={{ fontFamily: "'Hanken Grotesk',sans-serif", letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}
             >
               Architects &amp; Engineers
             </h1>
@@ -63,12 +63,12 @@ export default function BrowseProfessionals() {
               Rwanda's verified construction professionals — checked credentials, real projects.
             </p>
           </div>
-          <div className="flex flex-col items-start md:items-end gap-3 fade-up du-2">
+          <div className="flex flex-col items-start md:items-end gap-3 fade-up du-2 w-full md:w-auto">
             {/* Search */}
-            <div className="relative">
+            <div className="relative w-full md:w-72">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#56433a]" style={{ fontSize: '18px' }}>search</span>
               <input
-                className="bg-[#fff8f5] border border-[#dcc1b5] rounded-full py-2 pl-10 pr-4 w-64 focus:border-[#99420d] outline-none text-sm transition-all"
+                className="bg-[#fff8f5] border border-[#dcc1b5] rounded-full py-3 pl-10 pr-4 w-full focus:border-[#99420d] outline-none text-sm transition-all"
                 placeholder="Search experts, skills..."
                 type="text"
                 value={search}
@@ -84,7 +84,7 @@ export default function BrowseProfessionals() {
         </div>
 
         {/* Filter bar */}
-        <div className="flex flex-wrap items-center gap-2 pb-8 border-b border-[#dcc1b5] fade-up du-3">
+        <div className="flex items-center gap-2 pb-6 md:pb-8 border-b border-[#dcc1b5] fade-up du-3 overflow-x-auto scrollbar-none" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {FILTERS.map(f => (
             <button
               key={f}
@@ -113,7 +113,7 @@ export default function BrowseProfessionals() {
         )}
 
         {!loading && !error && filtered.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 py-6 md:py-8">
             {filtered.map((pro, i) => (
               <div key={pro._id} className="browse-card-shell fade-up" style={{ animationDelay: `${(i + 4) * 70}ms` }}>
                 <div className="browse-card-core">

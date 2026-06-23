@@ -50,13 +50,13 @@ export default function AdminDashboard() {
       <div className="flex flex-1">
         <AdminSidebar />
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
           <div className="max-w-5xl mx-auto">
 
-            <div className="mb-10 fade-up du-1">
+            <div className="mb-8 md:mb-10 fade-up du-1">
               <h1
-                className="text-[#1e1b18]"
-                style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '40px', letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}
+                className="text-[#1e1b18] text-2xl md:text-[40px]"
+                style={{ fontFamily: "'Hanken Grotesk',sans-serif", letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}
               >
                 Welcome, {user?.fullName?.split(' ')[0]}
               </h1>
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Metric cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-10 fade-up du-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 md:mb-10 fade-up du-2">
               <MetricCard icon="group" label="Total Users" value={analytics?.totalUsers} color="#99420d" />
               <MetricCard icon="engineering" label="Total Professionals" value={analytics?.totalProfessionals} color="#934b19" />
               <MetricCard icon="person" label="Total Clients" value={analytics?.totalClients} color="#665a4f" />

@@ -102,7 +102,7 @@ export default function ProfessionalSettings() {
       <Navbar />
 
       <main className="flex-1 w-full max-w-[820px] mx-auto px-4 md:px-10 py-10">
-        <h1 className="mb-8" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600, letterSpacing: '-0.01em' }}>
+        <h1 className="mb-8 text-2xl md:text-[32px]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 600, letterSpacing: '-0.01em' }}>
           Profile Settings
         </h1>
 
@@ -140,7 +140,7 @@ export default function ProfessionalSettings() {
                     <label className={labelCls}>Phone Number</label>
                     <input {...basicForm.register('phone')} type="tel" placeholder="+250 7XX XXX XXX" className={inputCls} />
                   </div>
-                  <button type="submit" disabled={basicForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
+                  <button type="submit" disabled={basicForm.formState.isSubmitting} className="w-full sm:self-start sm:w-auto px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 min-h-[44px]">
                     {basicForm.formState.isSubmitting ? 'Saving...' : 'Save Profile Details'}
                   </button>
                 </form>
@@ -169,7 +169,7 @@ export default function ProfessionalSettings() {
                     <label className={labelCls}>Bio</label>
                     <textarea {...proForm.register('bio')} rows={4} placeholder="Tell clients about your experience and expertise..." className={`${inputCls} resize-none`} />
                   </div>
-                  <button type="submit" disabled={proForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
+                  <button type="submit" disabled={proForm.formState.isSubmitting} className="w-full sm:self-start sm:w-auto px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 min-h-[44px]">
                     {proForm.formState.isSubmitting ? 'Saving...' : 'Save Professional Details'}
                   </button>
                 </form>
@@ -212,7 +212,7 @@ export default function ProfessionalSettings() {
                     <label className={labelCls}>Confirm New Password</label>
                     <input {...passwordForm.register('confirmPassword', { required: true })} type="password" placeholder="Repeat new password" className={inputCls} />
                   </div>
-                  <button type="submit" disabled={passwordForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
+                  <button type="submit" disabled={passwordForm.formState.isSubmitting} className="w-full sm:self-start sm:w-auto px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 min-h-[44px]">
                     {passwordForm.formState.isSubmitting ? 'Updating...' : 'Update Password'}
                   </button>
                 </form>

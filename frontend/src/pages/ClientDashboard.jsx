@@ -20,7 +20,7 @@ function formatDate(dateStr) {
 function Footer() {
   return (
     <footer className="border-t border-[#dcc1b5] py-8 mt-auto">
-      <div className="max-w-[1280px] mx-auto px-10 flex flex-col md:flex-row justify-between items-center gap-3">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-3">
         <span className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</span>
         <span className="text-sm text-[#56433a]">© 2024 Ubwubatsi Hub. Building Rwanda with Integrity.</span>
         <div className="flex gap-5">
@@ -164,12 +164,12 @@ export default function ClientDashboard() {
         <div className="mb-12 fade-up du-1">
           <span className="text-sm text-[#56433a]">Good day</span>
           <h1
-            className="text-[#1e1b18] mt-1"
-            style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '40px', letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}
+            className="text-[#1e1b18] mt-1 text-3xl md:text-[40px]"
+            style={{ fontFamily: "'Hanken Grotesk',sans-serif", letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}
           >
             Welcome back, {firstName}
           </h1>
-          <p className="text-lg text-[#56433a] mt-2">Manage your construction projects and find the right professionals.</p>
+          <p className="text-base md:text-lg text-[#56433a] mt-2">Manage your construction projects and find the right professionals.</p>
         </div>
 
         {/* Action cards */}
@@ -241,14 +241,14 @@ export default function ClientDashboard() {
                 return (
                   <div key={proj._id} className="flex flex-col gap-2 fade-up du-4">
                     {/* Project row */}
-                    <div className="project-item">
-                      <div className="flex items-start gap-4 flex-1 min-w-0">
+                    <div className="project-item flex-col md:flex-row items-start md:items-center">
+                      <div className="flex items-start gap-4 flex-1 min-w-0 w-full">
                         <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(153,66,13,0.08)' }}>
                           <span className="material-symbols-outlined text-[#99420d]" style={{ fontSize: '20px' }}>architecture</span>
                         </div>
                         <div className="min-w-0">
                           <h4 className="text-base font-semibold text-[#1e1b18]">{proj.title}</h4>
-                          <div className="flex flex-wrap items-center gap-3 mt-0.5 text-sm text-[#56433a]">
+                          <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-0.5 text-sm text-[#56433a]">
                             <span className="flex items-center gap-1">
                               <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>calendar_today</span>
                               {formatDate(proj.createdAt)}
@@ -258,16 +258,16 @@ export default function ClientDashboard() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                      <div className="flex items-center gap-2 flex-wrap justify-start md:justify-end w-full md:w-auto mt-3 md:mt-0 flex-shrink-0">
                         <span className="status-badge" style={{ background: badge.background, color: badge.color }}>{badge.label}</span>
                         <span className="text-sm font-medium text-[#56433a]">{proj.budget}</span>
                         <button
                           onClick={() => handleOpenExpressions(proj)}
-                          className="relative flex items-center gap-1.5 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
+                          className="relative flex items-center gap-1.5 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-2 rounded-full border border-[#dcc1b5] hover:border-[#99420d] min-h-[36px]"
                           style={{ letterSpacing: '0.04em' }}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>people</span>
-                          Interested Professionals
+                          Interested
                           {exprCount > 0 && (
                             <span className="ml-1 bg-[#99420d] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
                               {exprCount > 9 ? '9+' : exprCount}
@@ -277,7 +277,7 @@ export default function ClientDashboard() {
                         {proj.status !== 'completed' && (
                           <Link
                             to={`/edit-project/${proj._id}`}
-                            className="flex items-center gap-1 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-1.5 rounded-full border border-[#dcc1b5] hover:border-[#99420d]"
+                            className="flex items-center gap-1 text-xs font-semibold text-[#56433a] hover:text-[#99420d] transition-colors px-3 py-2 rounded-full border border-[#dcc1b5] hover:border-[#99420d] min-h-[36px]"
                             style={{ letterSpacing: '0.04em', textDecoration: 'none' }}
                           >
                             <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>edit</span>
@@ -286,7 +286,7 @@ export default function ClientDashboard() {
                         )}
                         <button
                           onClick={() => handleDelete(proj._id)}
-                          className="flex items-center gap-1 text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
+                          className="flex items-center gap-1 text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-2 rounded-full border border-[#ba1a1a] min-h-[36px]"
                           style={{ letterSpacing: '0.04em', background: 'transparent', cursor: 'pointer' }}
                         >
                           <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>delete</span>
@@ -321,8 +321,8 @@ export default function ClientDashboard() {
 
       {/* Interested Professionals Modal */}
       {expressionsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
-          <div className="bg-[#fff8f5] rounded-2xl shadow-xl w-full max-w-lg flex flex-col" style={{ maxHeight: '85vh' }}>
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-[#fff8f5] w-full md:max-w-lg rounded-t-2xl md:rounded-2xl shadow-xl flex flex-col" style={{ maxHeight: '90vh' }}>
 
             <div className="flex justify-between items-start p-6 pb-4 border-b border-[#dcc1b5]">
               <div>

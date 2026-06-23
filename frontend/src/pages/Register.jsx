@@ -102,7 +102,7 @@ export default function Register() {
 
               {error && <p className="text-sm text-[#ba1a1a]">{error}</p>}
 
-              <button className="btn-primary-sm w-full justify-center mt-2" type="submit" disabled={isSubmitting}>
+              <button className="btn-primary-sm w-full justify-center mt-2" type="submit" disabled={isSubmitting} style={{ minHeight: '44px' }}>
                 {isSubmitting ? 'Creating account…' : 'Create account'}
                 {!isSubmitting && (
                   <span className="btn-icon">

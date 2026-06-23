@@ -63,10 +63,10 @@ export default function AllProjects() {
       <div className="flex flex-1">
         <AdminSidebar />
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
           <div className="max-w-5xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 700, letterSpacing: '-0.01em' }}>All Projects</h1>
+              <h1 className="text-2xl md:text-[32px] text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.01em' }}>All Projects</h1>
               <p className="text-base text-[#56433a] mt-1">View and manage all projects posted on the platform.</p>
             </div>
 
@@ -81,12 +81,12 @@ export default function AllProjects() {
                   onChange={e => setSearch(e.target.value)}
                 />
               </div>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 overflow-x-auto flex-nowrap pb-1">
                 {CATEGORY_FILTERS.map(f => (
                   <button
                     key={f}
                     onClick={() => setActiveFilter(f)}
-                    className="text-xs font-semibold px-4 py-2 rounded-full border transition-colors"
+                    className="text-xs font-semibold px-4 py-2 rounded-full border transition-colors flex-shrink-0"
                     style={{
                       letterSpacing: '0.05em',
                       background: activeFilter === f ? '#99420d' : 'transparent',
@@ -111,72 +111,107 @@ export default function AllProjects() {
                 </div>
               </div>
             ) : (
-              <div className="card-shell overflow-hidden">
-                <div style={{ background: '#fff8f5', borderRadius: 'calc(1.25rem - 5px)', overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
-                        {['Title', 'Category', 'Location', 'Budget', 'Status', 'Client', 'Date', 'Actions'].map(h => (
-                          <th key={h} className="text-xs font-semibold text-[#56433a] text-left px-5 py-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filtered.map((proj, i) => {
-                        const badge = STATUS_BADGES[proj.status] || STATUS_BADGES.open;
-                        return (
-                          <tr key={proj._id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(220,193,181,0.5)' : 'none' }}>
-                            <td className="px-5 py-4 text-sm font-semibold text-[#1e1b18]" style={{ maxWidth: '160px' }}>
-                              <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{proj.title}</span>
-                            </td>
-                            <td className="px-5 py-4">
-                              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(153,66,13,0.08)', color: '#99420d', letterSpacing: '0.05em' }}>
-                                {proj.category}
-                              </span>
-                            </td>
-                            <td className="px-5 py-4 text-sm text-[#56433a]">{proj.location}</td>
-                            <td className="px-5 py-4 text-sm text-[#56433a]" style={{ whiteSpace: 'nowrap' }}>{proj.budget}</td>
-                            <td className="px-5 py-4">
-                              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: badge.background, color: badge.color, letterSpacing: '0.05em' }}>
-                                {badge.label}
-                              </span>
-                            </td>
-                            <td className="px-5 py-4 text-sm text-[#56433a]">
-                              <div>{proj.clientId?.fullName || '—'}</div>
-                              <div className="text-xs text-[#897268]">{proj.clientId?.email}</div>
-                            </td>
-                            <td className="px-5 py-4 text-sm text-[#56433a]" style={{ whiteSpace: 'nowrap' }}>
-                              {proj.createdAt ? new Date(proj.createdAt).toLocaleDateString() : '—'}
-                            </td>
-                            <td className="px-5 py-4">
-                              <div className="flex items-center gap-2">
-                                {proj.kubakaLink && (
-                                  <a
-                                    href={proj.kubakaLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs font-semibold text-[#99420d] hover:underline"
-                                    style={{ letterSpacing: '0.04em' }}
+              <>
+                {/* Desktop table */}
+                <div className="card-shell overflow-hidden hidden md:block">
+                  <div style={{ background: '#fff8f5', borderRadius: 'calc(1.25rem - 5px)', overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
+                          {['Title', 'Category', 'Location', 'Budget', 'Status', 'Client', 'Date', 'Actions'].map(h => (
+                            <th key={h} className="text-xs font-semibold text-[#56433a] text-left px-5 py-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filtered.map((proj, i) => {
+                          const badge = STATUS_BADGES[proj.status] || STATUS_BADGES.open;
+                          return (
+                            <tr key={proj._id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(220,193,181,0.5)' : 'none' }}>
+                              <td className="px-5 py-4 text-sm font-semibold text-[#1e1b18]" style={{ maxWidth: '160px' }}>
+                                <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{proj.title}</span>
+                              </td>
+                              <td className="px-5 py-4">
+                                <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: 'rgba(153,66,13,0.08)', color: '#99420d', letterSpacing: '0.05em' }}>
+                                  {proj.category}
+                                </span>
+                              </td>
+                              <td className="px-5 py-4 text-sm text-[#56433a]">{proj.location}</td>
+                              <td className="px-5 py-4 text-sm text-[#56433a]" style={{ whiteSpace: 'nowrap' }}>{proj.budget}</td>
+                              <td className="px-5 py-4">
+                                <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: badge.background, color: badge.color, letterSpacing: '0.05em' }}>
+                                  {badge.label}
+                                </span>
+                              </td>
+                              <td className="px-5 py-4 text-sm text-[#56433a]">
+                                <div>{proj.clientId?.fullName || '—'}</div>
+                                <div className="text-xs text-[#897268]">{proj.clientId?.email}</div>
+                              </td>
+                              <td className="px-5 py-4 text-sm text-[#56433a]" style={{ whiteSpace: 'nowrap' }}>
+                                {proj.createdAt ? new Date(proj.createdAt).toLocaleDateString() : '—'}
+                              </td>
+                              <td className="px-5 py-4">
+                                <div className="flex items-center gap-2">
+                                  {proj.kubakaLink && (
+                                    <a href={proj.kubakaLink} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-[#99420d] hover:underline">KUBAKA</a>
+                                  )}
+                                  <button
+                                    onClick={() => handleDelete(proj._id)}
+                                    className="text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
+                                    style={{ background: 'transparent', cursor: 'pointer' }}
                                   >
-                                    KUBAKA
-                                  </a>
-                                )}
-                                <button
-                                  onClick={() => handleDelete(proj._id)}
-                                  className="text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
-                                  style={{ background: 'transparent', cursor: 'pointer', letterSpacing: '0.04em' }}
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+
+                {/* Mobile cards */}
+                <div className="flex flex-col gap-3 md:hidden">
+                  {filtered.map(proj => {
+                    const badge = STATUS_BADGES[proj.status] || STATUS_BADGES.open;
+                    return (
+                      <div key={proj._id} className="card-shell">
+                        <div className="card-core" style={{ padding: '16px 20px' }}>
+                          <div className="flex items-start justify-between gap-3 mb-2">
+                            <p className="text-sm font-semibold text-[#1e1b18] flex-1 min-w-0">{proj.title}</p>
+                            <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0" style={{ background: badge.background, color: badge.color }}>
+                              {badge.label}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-1.5 text-xs text-[#56433a] mb-3">
+                            <div><span className="font-medium text-[#1e1b18]">Category: </span>{proj.category}</div>
+                            <div><span className="font-medium text-[#1e1b18]">Location: </span>{proj.location}</div>
+                            <div><span className="font-medium text-[#1e1b18]">Budget: </span>{proj.budget}</div>
+                            <div><span className="font-medium text-[#1e1b18]">Client: </span>{proj.clientId?.fullName || '—'}</div>
+                            <div><span className="font-medium text-[#1e1b18]">Date: </span>{proj.createdAt ? new Date(proj.createdAt).toLocaleDateString() : '—'}</div>
+                          </div>
+                          <div className="flex gap-2">
+                            {proj.kubakaLink && (
+                              <a href={proj.kubakaLink} target="_blank" rel="noopener noreferrer" className="flex-1 text-xs font-semibold text-[#99420d] border border-[#99420d] rounded-full py-2.5 text-center min-h-[40px] flex items-center justify-center">
+                                KUBAKA
+                              </a>
+                            )}
+                            <button
+                              onClick={() => handleDelete(proj._id)}
+                              className="flex-1 text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-2.5 rounded-full border border-[#ba1a1a] min-h-[40px]"
+                              style={{ background: 'transparent', cursor: 'pointer' }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
         </main>
