@@ -110,25 +110,25 @@ export default function Navbar() {
     );
     if (user.role === 'client') return (
       <>
+        {mobileNavLink('/client-profile', 'My Profile', 'person')}
+        {mobileNavLink('/client-dashboard', 'My Projects', 'folder_open')}
         {mobileNavLink('/browse-professionals', 'Find Experts', 'search')}
         {mobileNavLink('/post-project', 'Post a Project', 'add_circle')}
-        {mobileNavLink('/client-dashboard', 'My Projects', 'folder_open')}
         {mobileNavLink('/messages', 'Messages', 'chat')}
         {mobileNavLink('/client-settings', 'Settings', 'settings')}
       </>
     );
     if (user.role === 'professional') return (
       <>
-        {mobileNavLink('/professional-dashboard', 'Browse Projects', 'dashboard')}
-        {mobileNavLink('/professional-settings', 'My Profile', 'person')}
+        {mobileNavLink('/professional-dashboard', 'My Profile', 'person')}
+        {mobileNavLink('/browse-professionals', 'Browse Projects', 'search')}
         {mobileNavLink('/messages', 'Messages', 'chat')}
+        {mobileNavLink('/professional-settings', 'Settings', 'settings')}
       </>
     );
     if (user.role === 'admin') return (
       <>
         {mobileNavLink('/admin', 'Dashboard', 'dashboard')}
-        {mobileNavLink('/admin/users', 'Users', 'group')}
-        {mobileNavLink('/admin/projects', 'Projects', 'folder_open')}
         {mobileNavLink('/admin/settings', 'Settings', 'settings')}
       </>
     );
