@@ -58,7 +58,7 @@ export default function ClientProfile() {
               </div>
               <div className="flex-1 pt-2 sm:pt-0">
                 <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                  <h1 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', letterSpacing: '-0.01em', fontWeight: 600 }}>
+                  <h1 className="text-2xl md:text-[32px] text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", letterSpacing: '-0.01em', fontWeight: 600 }}>
                     {user?.fullName || 'Client'}
                   </h1>
                 </div>
@@ -174,7 +174,7 @@ export default function ClientProfile() {
         {/* Right sidebar */}
         <div className="lg:col-span-4 flex flex-col gap-5">
 
-          <div className="sidebar-card sticky top-28 fade-up du-4">
+          <div className="sidebar-card lg:sticky top-28 fade-up du-4">
             <div className="sidebar-card-core">
               <h3 className="text-[#1e1b18] mb-1" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '22px', fontWeight: 600 }}>
                 My Account

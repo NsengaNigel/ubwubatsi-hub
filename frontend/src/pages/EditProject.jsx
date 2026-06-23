@@ -64,7 +64,7 @@ export default function EditProject() {
           </div>
 
           <div className="card-shell fade-up du-2">
-            <div className="card-core" style={{ padding: '36px 40px' }}>
+            <div className="card-core">
               <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
 
                 <div className="flex flex-col gap-2">
@@ -128,11 +128,11 @@ export default function EditProject() {
                   />
                 </div>
 
-                <div className="flex items-center justify-end gap-4 pt-2 border-t border-[#dcc1b5]">
-                  <Link to="/client-dashboard" className="text-sm font-semibold text-[#56433a] hover:text-[#99420d] transition-colors">
+                <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-2 border-t border-[#dcc1b5]">
+                  <Link to="/client-dashboard" className="text-sm font-semibold text-[#56433a] hover:text-[#99420d] transition-colors text-center py-3 sm:py-0 min-h-[44px] sm:min-h-0 flex items-center justify-center sm:justify-start">
                     Cancel
                   </Link>
-                  <button className="btn-primary-sm" type="submit" disabled={isSubmitting}>
+                  <button className="btn-primary-sm w-full sm:w-auto justify-center" type="submit" disabled={isSubmitting} style={{ minHeight: '44px' }}>
                     {isSubmitting ? 'Saving…' : 'Save changes'}
                     {!isSubmitting && (
                       <span className="btn-icon">

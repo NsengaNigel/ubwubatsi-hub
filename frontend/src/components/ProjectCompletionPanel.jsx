@@ -96,11 +96,11 @@ export default function ProjectCompletionPanel({ project, canRate, alreadyRated,
         </div>
 
         {/* Action row */}
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 items-center">
           <button
             onClick={handleMessage}
             disabled={messaging}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full border border-[#dcc1b5] text-[#56433a] hover:border-[#99420d] hover:text-[#99420d] transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full border border-[#dcc1b5] text-[#56433a] hover:border-[#99420d] hover:text-[#99420d] transition-colors disabled:opacity-50 min-h-[40px]"
           >
             <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>chat</span>
             {messaging ? 'Opening…' : 'Message'}
@@ -108,7 +108,7 @@ export default function ProjectCompletionPanel({ project, canRate, alreadyRated,
 
           <Link
             to={`/professional/${pro.userId}`}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full border border-[#dcc1b5] text-[#56433a] hover:border-[#99420d] hover:text-[#99420d] transition-colors"
+            className="flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full border border-[#dcc1b5] text-[#56433a] hover:border-[#99420d] hover:text-[#99420d] transition-colors min-h-[40px]"
             style={{ textDecoration: 'none' }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>person</span>
@@ -118,7 +118,7 @@ export default function ProjectCompletionPanel({ project, canRate, alreadyRated,
           {isInProgress && !confirming && (
             <button
               onClick={() => setConfirming(true)}
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full bg-[#3b6623] text-white hover:bg-[#2d4f1a] transition-colors"
+              className="flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full bg-[#3b6623] text-white hover:bg-[#2d4f1a] transition-colors min-h-[40px]"
             >
               <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>check_circle</span>
               Mark Complete
@@ -126,18 +126,18 @@ export default function ProjectCompletionPanel({ project, canRate, alreadyRated,
           )}
 
           {isInProgress && confirming && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-[#56433a] font-medium">Confirm completion?</span>
+            <div className="col-span-2 sm:col-span-1 flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-[#56433a] font-medium w-full sm:w-auto">Confirm completion?</span>
               <button
                 onClick={() => setConfirming(false)}
-                className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#dcc1b5] text-[#56433a] hover:border-[#99420d] transition-colors"
+                className="flex-1 sm:flex-none text-xs font-semibold px-3 py-2 rounded-full border border-[#dcc1b5] text-[#56433a] hover:border-[#99420d] transition-colors min-h-[40px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleMarkComplete}
                 disabled={completing}
-                className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#3b6623] text-white hover:bg-[#2d4f1a] transition-colors disabled:opacity-50"
+                className="flex-1 sm:flex-none text-xs font-semibold px-3 py-2 rounded-full bg-[#3b6623] text-white hover:bg-[#2d4f1a] transition-colors disabled:opacity-50 min-h-[40px]"
               >
                 {completing ? 'Completing…' : 'Yes, complete'}
               </button>
@@ -147,7 +147,7 @@ export default function ProjectCompletionPanel({ project, canRate, alreadyRated,
           {isCompleted && canRate && (
             <button
               onClick={onRateClick}
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full bg-[#99420d] text-white hover:bg-[#7a3409] transition-colors"
+              className="flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full bg-[#99420d] text-white hover:bg-[#7a3409] transition-colors min-h-[40px]"
             >
               <span className="material-symbols-outlined fill" style={{ fontSize: '13px' }}>star</span>
               Leave a Review
@@ -155,7 +155,7 @@ export default function ProjectCompletionPanel({ project, canRate, alreadyRated,
           )}
 
           {isCompleted && alreadyRated && (
-            <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full" style={{ background: 'rgba(14,115,45,0.08)', color: '#0e7312' }}>
+            <span className="flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full min-h-[40px]" style={{ background: 'rgba(14,115,45,0.08)', color: '#0e7312' }}>
               <span className="material-symbols-outlined fill" style={{ fontSize: '13px' }}>verified</span>
               Reviewed
             </span>

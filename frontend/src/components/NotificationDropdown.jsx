@@ -59,8 +59,8 @@ export default function NotificationDropdown({ onClose, onCountReset }) {
 
   return (
     <div
-      className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-lg border border-[#dcc1b5] z-50 overflow-hidden"
-      style={{ width: '360px', maxWidth: 'calc(100vw - 2rem)' }}
+      className="fixed md:absolute inset-x-3 md:inset-x-auto top-[72px] md:top-full md:right-0 md:mt-2 bg-white rounded-2xl shadow-lg border border-[#dcc1b5] z-50 overflow-hidden"
+      style={{ maxWidth: '360px', width: 'auto', margin: '0 auto' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[#dcc1b5]">
@@ -78,7 +78,7 @@ export default function NotificationDropdown({ onClose, onCountReset }) {
       </div>
 
       {/* List */}
-      <div className="overflow-y-auto" style={{ maxHeight: '340px' }}>
+      <div className="overflow-y-auto" style={{ maxHeight: '70vh' }}>
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="w-5 h-5 border-2 border-[#dcc1b5] border-t-[#99420d] rounded-full animate-spin" />

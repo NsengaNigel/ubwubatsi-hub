@@ -53,6 +53,7 @@ export default function ProfessionalDashboard() {
   const [loadingRatings, setLoadingRatings] = useState(true);
   const [myProfile, setMyProfile] = useState(null);
 
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [messagingClients, setMessagingClients] = useState({});
   const [showCertModal, setShowCertModal] = useState(false);
   const certForm = useForm();
@@ -180,7 +181,64 @@ export default function ProfessionalDashboard() {
   return (
     <div className="bg-[#fff8f5] text-[#1e1b18] flex min-h-screen">
 
-      {/* Sidebar */}
+      {/* Mobile nav overlay */}
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMobileNavOpen(false)}>
+          <div className="absolute inset-0 bg-black/50" />
+          <nav className="pro-sidebar flex" style={{ position: 'absolute' }} onClick={e => e.stopPropagation()}>
+            <div className="px-6 pb-7 border-b border-white/10 mb-2" style={{ paddingTop: 0 }}>
+              <Link to="/" style={{ color: '#ffdbcc', fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 700, textDecoration: 'none' }}>
+                Ubwubatsi Hub
+              </Link>
+              <div className="flex items-center gap-3 mt-5">
+                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(153,66,13,0.25)', border: '2px solid rgba(153,66,13,0.4)' }}>
+                  {user?.profilePicture ? (
+                    <img src={user.profilePicture} alt={user.fullName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span style={{ fontSize: '16px', fontWeight: 600, color: '#ffb693', letterSpacing: '0.05em' }}>{initials}</span>
+                  )}
+                </div>
+                <div>
+                  <p style={{ color: '#fff8f5', fontSize: '14px', fontWeight: 600, letterSpacing: '0.05em' }}>{user?.fullName || 'Professional'}</p>
+                  <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '14px' }}>Verified Professional</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col flex-grow py-2">
+              <Link to="/professional-dashboard" className="sidebar-nav-item active" onClick={() => setMobileNavOpen(false)}>
+                <span className="material-symbols-outlined fill" style={{ fontSize: '20px' }}>dashboard</span>
+                Dashboard
+              </Link>
+              <Link to="/browse-professionals" className="sidebar-nav-item" onClick={() => setMobileNavOpen(false)}>
+                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>search</span>
+                Browse Projects
+              </Link>
+              <Link to="/messages" className="sidebar-nav-item" onClick={() => setMobileNavOpen(false)}>
+                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chat</span>
+                Messages
+              </Link>
+            </div>
+            <div className="px-0 mt-auto" style={{ paddingBottom: '8px' }}>
+              <div className="flex flex-col gap-1 px-0">
+                <Link to="/professional-settings" className="sidebar-nav-item" style={{ padding: '10px 8px', borderRadius: '8px' }} onClick={() => setMobileNavOpen(false)}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>settings</span>
+                  Settings
+                </Link>
+                <button
+                  className="sidebar-nav-item text-left w-full"
+                  style={{ padding: '10px 8px', borderRadius: '8px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                  onClick={() => { logout(); }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>logout</span>
+                  Logout
+                </button>
+              </div>
+            </div>
+          </nav>
+        </div>
+      )}
+
+      {/* Sidebar — desktop only */}
       <nav className="pro-sidebar hidden md:flex">
         <div className="px-6 pb-7 border-b border-white/10 mb-2" style={{ paddingTop: 0 }}>
           <Link to="/" style={{ color: '#ffdbcc', fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 700, textDecoration: 'none' }}>
@@ -238,9 +296,13 @@ export default function ProfessionalDashboard() {
       <main className="flex-1 md:ml-64 flex flex-col min-h-screen">
 
         {/* Top bar */}
-        <header className="h-20 flex justify-between items-center px-10 bg-[#fff8f5] border-b border-[#dcc1b5] sticky top-0 z-40">
+        <header className="h-20 flex justify-between items-center px-4 md:px-10 bg-[#fff8f5] border-b border-[#dcc1b5] sticky top-0 z-40">
           <div className="flex items-center gap-3">
-            <button className="md:hidden text-[#56433a]">
+            <button
+              className="flex md:hidden items-center justify-center min-h-[44px] min-w-[44px] text-[#56433a] hover:text-[#99420d] transition-colors"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label="Open navigation"
+            >
               <span className="material-symbols-outlined">menu</span>
             </button>
             <Link to="/" className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>
@@ -269,17 +331,17 @@ export default function ProfessionalDashboard() {
 
           {/* Welcome */}
           <section className="fade-up du-1">
-            <h2 className="text-[#1e1b18] flex items-center gap-3" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '48px', letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}>
+            <h2 className="text-[#1e1b18] flex items-center gap-3 flex-wrap text-3xl md:text-5xl" style={{ fontFamily: "'Hanken Grotesk',sans-serif", letterSpacing: '-0.02em', lineHeight: '1.05', fontWeight: 700 }}>
               Welcome back, {firstName}
               <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '28px' }} title="Verified">verified</span>
             </h2>
-            <p className="text-lg text-[#56433a] mt-2">Here's what is happening with your projects today.</p>
+            <p className="text-base md:text-lg text-[#56433a] mt-2">Here's what is happening with your projects today.</p>
           </section>
 
           {/* Available Projects */}
           <section className="fade-up du-2">
             <div className="flex justify-between items-end border-b border-[#dcc1b5] pb-3 mb-6">
-              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>Available Projects</h3>
+              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 600 }}>Available Projects</h3>
             </div>
 
             {loadingProjects ? (
@@ -333,7 +395,7 @@ export default function ProfessionalDashboard() {
           {/* Active Projects */}
           <section className="fade-up du-3">
             <div className="flex justify-between items-end border-b border-[#dcc1b5] pb-3 mb-6">
-              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>Active Projects</h3>
+              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 600 }}>Active Projects</h3>
             </div>
 
             {loadingActive ? (
@@ -378,7 +440,7 @@ export default function ProfessionalDashboard() {
           {/* My Expressions of Interest */}
           <section className="fade-up du-4">
             <div className="flex justify-between items-end border-b border-[#dcc1b5] pb-3 mb-6">
-              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>My Interest Applications</h3>
+              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 600 }}>My Interest Applications</h3>
             </div>
 
             {loadingExpressions ? (
@@ -439,7 +501,7 @@ export default function ProfessionalDashboard() {
           {/* Messages Preview */}
           <section className="fade-up du-5">
             <div className="flex justify-between items-end border-b border-[#dcc1b5] pb-3 mb-6">
-              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>Recent Messages</h3>
+              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 600 }}>Recent Messages</h3>
               <Link to="/messages" className="text-sm font-semibold text-[#99420d] hover:underline">View All</Link>
             </div>
 
@@ -479,7 +541,7 @@ export default function ProfessionalDashboard() {
           <section className="fade-up du-6">
             <div className="flex items-end justify-between border-b border-[#dcc1b5] pb-3 mb-6 flex-wrap gap-3">
               <div>
-                <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>Client Reviews</h3>
+                <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 600 }}>Client Reviews</h3>
                 {myProfile?.averageRating > 0 && (
                   <div className="flex items-center gap-2 mt-1.5">
                     <StarRating value={Math.round(myProfile.averageRating)} readOnly size="md" />
@@ -537,7 +599,7 @@ export default function ProfessionalDashboard() {
           {/* Certifications */}
           <section className="fade-up du-6 pb-12">
             <div className="flex justify-between items-end border-b border-[#dcc1b5] pb-3 mb-6">
-              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600 }}>Certifications</h3>
+              <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 600 }}>Certifications</h3>
               <button
                 onClick={() => setShowCertModal(true)}
                 className="flex items-center gap-1.5 px-4 py-2 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors"
@@ -583,8 +645,8 @@ export default function ProfessionalDashboard() {
 
       {/* Express Interest Modal */}
       {interestModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
-          <div className="bg-[#fff8f5] rounded-2xl shadow-xl w-full max-w-md p-7">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-[#fff8f5] w-full md:max-w-md rounded-t-2xl md:rounded-2xl shadow-xl p-5 md:p-7">
             <div className="flex justify-between items-center mb-2">
               <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '22px', fontWeight: 600, color: '#1e1b18' }}>Express Interest</h3>
               <button onClick={() => { setInterestModal(null); setModalMessage(''); }} className="text-[#56433a] hover:text-[#99420d]">
@@ -625,8 +687,8 @@ export default function ProfessionalDashboard() {
 
       {/* Add Certification Modal */}
       {showCertModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
-          <div className="bg-[#fff8f5] rounded-2xl shadow-xl w-full max-w-md p-7">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4" style={{ background: 'rgba(30,27,24,0.4)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-[#fff8f5] w-full md:max-w-md rounded-t-2xl md:rounded-2xl shadow-xl p-5 md:p-7">
             <div className="flex justify-between items-center mb-6">
               <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '22px', fontWeight: 600, color: '#1e1b18' }}>Add Certification</h3>
               <button onClick={() => { setShowCertModal(false); certForm.reset(); }} className="text-[#56433a] hover:text-[#99420d]">

@@ -34,8 +34,8 @@ export default function Landing() {
               Verified professionals only
             </span>
             <h1
-              className="fade-up du-2 text-[#1e1b18]"
-              style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '48px', lineHeight: '1.05', letterSpacing: '-0.02em', fontWeight: 700 }}
+              className="fade-up du-2 text-[#1e1b18] text-3xl md:text-5xl lg:text-[56px]"
+              style={{ fontFamily: "'Hanken Grotesk',sans-serif", lineHeight: '1.05', letterSpacing: '-0.02em', fontWeight: 700 }}
             >
               Find Verified<br />
               <span className="text-[#99420d]">Architects &amp; Engineers</span><br />
@@ -45,13 +45,13 @@ export default function Landing() {
               Connecting homeowners with Rwanda's top construction professionals. Build with trusted experts, transparent pricing, and guaranteed quality.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 fade-up du-4">
-              <Link to="/post-project" className="btn-primary">
+              <Link to="/post-project" className="btn-primary w-full sm:w-auto justify-center">
                 Post a Project
                 <span className="btn-icon">
                   <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
                 </span>
               </Link>
-              <Link to="/browse-professionals" className="btn-outline">Find Professionals</Link>
+              <Link to="/browse-professionals" className="btn-outline w-full sm:w-auto justify-center">Find Professionals</Link>
             </div>
           </div>
 
@@ -59,15 +59,15 @@ export default function Landing() {
           <div className="md:col-span-5 mt-10 md:mt-0 fade-up du-5">
             <div className="stat-shell">
               <div className="stat-row" style={{ background: '#fff8f5' }}>
-                <p className="text-[#99420d] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '48px', fontWeight: 700, letterSpacing: '-0.02em' }}>500+</p>
+                <p className="text-[#99420d] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.02em', fontSize: 'clamp(32px, 6vw, 48px)' }}>500+</p>
                 <p className="text-sm text-[#56433a] mt-2">Verified architects &amp; engineers registered on the platform</p>
               </div>
               <div className="stat-row" style={{ background: 'rgba(245,236,231,0.5)' }}>
-                <p className="text-[#1e1b18] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '48px', fontWeight: 700, letterSpacing: '-0.02em' }}>200+</p>
+                <p className="text-[#1e1b18] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.02em', fontSize: 'clamp(32px, 6vw, 48px)' }}>200+</p>
                 <p className="text-sm text-[#56433a] mt-2">Projects completed across Rwanda</p>
               </div>
               <div className="stat-row" style={{ background: '#fff8f5' }}>
-                <p className="text-[#1e1b18] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '48px', fontWeight: 700, letterSpacing: '-0.02em' }}>48h</p>
+                <p className="text-[#1e1b18] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.02em', fontSize: 'clamp(32px, 6vw, 48px)' }}>48h</p>
                 <p className="text-sm text-[#56433a] mt-2">Average response time from professionals</p>
               </div>
             </div>

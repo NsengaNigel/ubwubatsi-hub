@@ -61,10 +61,10 @@ export default function Analytics() {
       <div className="flex flex-1">
         <AdminSidebar />
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
           <div className="max-w-5xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 700, letterSpacing: '-0.01em' }}>Analytics</h1>
+              <h1 className="text-[#1e1b18] text-2xl md:text-[32px]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.01em' }}>Analytics</h1>
               <p className="text-base text-[#56433a] mt-1">Platform metrics and user registration trends.</p>
             </div>
 
@@ -73,7 +73,7 @@ export default function Analytics() {
             ) : (
               <>
                 {/* Metric cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 md:mb-10">
                   {METRICS.map(m => (
                     <div key={m.key} className="admin-metric-card">
                       <div className="admin-metric-core">
@@ -90,9 +90,9 @@ export default function Analytics() {
                 </div>
 
                 {/* Bar chart */}
-                <div className="card-shell mb-8">
-                  <div className="card-core" style={{ padding: '28px 32px' }}>
-                    <h2 className="text-[#1e1b18] mb-6" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>
+                <div className="card-shell mb-6 md:mb-8">
+                  <div className="card-core" style={{ padding: '20px 16px' }}>
+                    <h2 className="text-[#1e1b18] mb-4 md:mb-6 text-lg md:text-2xl" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 600 }}>
                       User Registrations — Last 7 Days
                     </h2>
                     <ResponsiveContainer width="100%" height={280}>
@@ -113,69 +113,73 @@ export default function Analytics() {
                 </div>
 
                 {/* Recent users */}
-                <div className="card-shell mb-8">
-                  <div className="card-core" style={{ padding: '28px 32px' }}>
-                    <div className="flex items-center justify-between mb-5">
-                      <h2 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Recent Users</h2>
-                      <Link to="/admin/users" className="text-sm font-semibold text-[#99420d] hover:underline" style={{ letterSpacing: '0.05em' }}>View all</Link>
+                <div className="card-shell mb-6 md:mb-8">
+                  <div className="card-core" style={{ padding: '20px 16px' }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-base md:text-xl text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 600 }}>Recent Users</h2>
+                      <Link to="/admin/users" className="text-xs md:text-sm font-semibold text-[#99420d] hover:underline" style={{ letterSpacing: '0.05em' }}>View all</Link>
                     </div>
                     {recentUsers.length === 0 ? (
                       <p className="text-sm text-[#56433a]">No users registered yet.</p>
                     ) : (
-                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                          <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
-                            {['Name', 'Role', 'Registered'].map(h => (
-                              <th key={h} className="text-xs font-semibold text-[#56433a] text-left pb-3" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {recentUsers.map((u, i) => (
-                            <tr key={u._id} style={{ borderBottom: i < recentUsers.length - 1 ? '1px solid rgba(220,193,181,0.4)' : 'none' }}>
-                              <td className="py-3 text-sm font-semibold text-[#1e1b18]">{u.fullName}</td>
-                              <td className="py-3">
-                                <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${ROLE_COLORS[u.role]}15`, color: ROLE_COLORS[u.role] || '#56433a', letterSpacing: '0.05em' }}>
-                                  {u.role}
-                                </span>
-                              </td>
-                              <td className="py-3 text-sm text-[#56433a]">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+                      <div className="overflow-x-auto -mx-1">
+                        <table style={{ width: '100%', minWidth: '360px', borderCollapse: 'collapse' }}>
+                          <thead>
+                            <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
+                              {['Name', 'Role', 'Registered'].map(h => (
+                                <th key={h} className="text-xs font-semibold text-[#56433a] text-left pb-3 pr-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
+                              ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {recentUsers.map((u, i) => (
+                              <tr key={u._id} style={{ borderBottom: i < recentUsers.length - 1 ? '1px solid rgba(220,193,181,0.4)' : 'none' }}>
+                                <td className="py-3 pr-4 text-sm font-semibold text-[#1e1b18]">{u.fullName}</td>
+                                <td className="py-3 pr-4">
+                                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${ROLE_COLORS[u.role]}15`, color: ROLE_COLORS[u.role] || '#56433a', letterSpacing: '0.05em' }}>
+                                    {u.role}
+                                  </span>
+                                </td>
+                                <td className="py-3 text-sm text-[#56433a]" style={{ whiteSpace: 'nowrap' }}>{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     )}
                   </div>
                 </div>
 
                 {/* Recent projects */}
                 <div className="card-shell">
-                  <div className="card-core" style={{ padding: '28px 32px' }}>
-                    <div className="flex items-center justify-between mb-5">
-                      <h2 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600 }}>Recent Projects</h2>
-                      <Link to="/admin/projects" className="text-sm font-semibold text-[#99420d] hover:underline" style={{ letterSpacing: '0.05em' }}>View all</Link>
+                  <div className="card-core" style={{ padding: '20px 16px' }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-base md:text-xl text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 600 }}>Recent Projects</h2>
+                      <Link to="/admin/projects" className="text-xs md:text-sm font-semibold text-[#99420d] hover:underline" style={{ letterSpacing: '0.05em' }}>View all</Link>
                     </div>
                     {recentProjects.length === 0 ? (
                       <p className="text-sm text-[#56433a]">No projects posted yet.</p>
                     ) : (
-                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                          <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
-                            {['Title', 'Client', 'Date'].map(h => (
-                              <th key={h} className="text-xs font-semibold text-[#56433a] text-left pb-3" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {recentProjects.map((p, i) => (
-                            <tr key={p._id} style={{ borderBottom: i < recentProjects.length - 1 ? '1px solid rgba(220,193,181,0.4)' : 'none' }}>
-                              <td className="py-3 text-sm font-semibold text-[#1e1b18]">{p.title}</td>
-                              <td className="py-3 text-sm text-[#56433a]">{p.clientId?.fullName || '—'}</td>
-                              <td className="py-3 text-sm text-[#56433a]">{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—'}</td>
+                      <div className="overflow-x-auto -mx-1">
+                        <table style={{ width: '100%', minWidth: '360px', borderCollapse: 'collapse' }}>
+                          <thead>
+                            <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
+                              {['Title', 'Client', 'Date'].map(h => (
+                                <th key={h} className="text-xs font-semibold text-[#56433a] text-left pb-3 pr-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
+                              ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {recentProjects.map((p, i) => (
+                              <tr key={p._id} style={{ borderBottom: i < recentProjects.length - 1 ? '1px solid rgba(220,193,181,0.4)' : 'none' }}>
+                                <td className="py-3 pr-4 text-sm font-semibold text-[#1e1b18]">{p.title}</td>
+                                <td className="py-3 pr-4 text-sm text-[#56433a]">{p.clientId?.fullName || '—'}</td>
+                                <td className="py-3 text-sm text-[#56433a]" style={{ whiteSpace: 'nowrap' }}>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     )}
                   </div>
                 </div>

@@ -61,7 +61,7 @@ export default function ClientSettings() {
       <Navbar />
 
       <main className="flex-1 w-full max-w-[820px] mx-auto px-4 md:px-10 py-10">
-        <h1 className="mb-8" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600, letterSpacing: '-0.01em' }}>
+        <h1 className="mb-8 text-2xl md:text-[32px]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 600, letterSpacing: '-0.01em' }}>
           Account Settings
         </h1>
 
@@ -98,7 +98,7 @@ export default function ClientSettings() {
                   <label className={labelCls}>Location in Kigali</label>
                   <input {...profileForm.register('location')} type="text" placeholder="e.g. Kicukiro, Kigali" className={inputCls} />
                 </div>
-                <button type="submit" disabled={profileForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
+                <button type="submit" disabled={profileForm.formState.isSubmitting} className="w-full sm:self-start sm:w-auto px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 min-h-[44px]">
                   {profileForm.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
                 </button>
               </form>
@@ -122,7 +122,7 @@ export default function ClientSettings() {
                   <label className={labelCls}>Confirm New Password</label>
                   <input {...passwordForm.register('confirmPassword', { required: true })} type="password" placeholder="Repeat new password" className={inputCls} />
                 </div>
-                <button type="submit" disabled={passwordForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
+                <button type="submit" disabled={passwordForm.formState.isSubmitting} className="w-full sm:self-start sm:w-auto px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 min-h-[44px]">
                   {passwordForm.formState.isSubmitting ? 'Updating...' : 'Update Password'}
                 </button>
               </form>
