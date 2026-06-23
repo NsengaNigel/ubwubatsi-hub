@@ -20,12 +20,11 @@ export default function Navbar() {
   const [unread, setUnread] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const notifRef = useRef(null);
   const profileRef = useRef(null);
-  const navRef = useRef(null);
 
+  // Poll notification unread count and message unread count every 30s
   useEffect(() => {
     if (!user) return;
     const fetchNotifs = () =>
@@ -42,6 +41,7 @@ export default function Navbar() {
     return () => clearInterval(interval);
   }, [user]);
 
+  // Real-time count update via socket
   useEffect(() => {
     if (!socket) return;
     const handler = (data) => setNotifCount(data.count);
@@ -49,6 +49,7 @@ export default function Navbar() {
     return () => socket.off('new_notification', handler);
   }, [socket]);
 
+  // Close dropdowns on outside click
   useEffect(() => {
     function handleOutside(e) {
       if (showNotifDropdown && notifRef.current && !notifRef.current.contains(e.target)) {
@@ -57,17 +58,10 @@ export default function Navbar() {
       if (showProfileMenu && profileRef.current && !profileRef.current.contains(e.target)) {
         setShowProfileMenu(false);
       }
-      if (mobileMenuOpen && navRef.current && !navRef.current.contains(e.target)) {
-        setMobileMenuOpen(false);
-      }
     }
     document.addEventListener('mousedown', handleOutside);
     return () => document.removeEventListener('mousedown', handleOutside);
-  }, [showNotifDropdown, showProfileMenu, mobileMenuOpen]);
-
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+  }, [showNotifDropdown, showProfileMenu]);
 
   const navLink = (to, label) => (
     <Link
@@ -79,61 +73,6 @@ export default function Navbar() {
       {label}
     </Link>
   );
-
-  const mobileNavLink = (to, label, icon) => (
-    <Link
-      to={to}
-      onClick={() => setMobileMenuOpen(false)}
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors min-h-[44px] ${
-        pathname === to ? 'text-[#99420d] bg-[rgba(153,66,13,0.06)]' : 'text-[#56433a] hover:bg-[#fdf5f2]'
-      }`}
-      style={{ textDecoration: 'none' }}
-    >
-      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{icon}</span>
-      {label}
-    </Link>
-  );
-
-  const getMobileNavLinks = () => {
-    if (!user) return (
-      <>
-        {mobileNavLink('/browse-professionals', 'Find Experts', 'search')}
-        <a
-          href="/#how-it-works"
-          onClick={() => setMobileMenuOpen(false)}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[#56433a] hover:bg-[#fdf5f2] transition-colors min-h-[44px]"
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>info</span>
-          How it Works
-        </a>
-      </>
-    );
-    if (user.role === 'client') return (
-      <>
-        {mobileNavLink('/browse-professionals', 'Find Experts', 'search')}
-        {mobileNavLink('/post-project', 'Post a Project', 'add_circle')}
-        {mobileNavLink('/client-dashboard', 'My Projects', 'folder_open')}
-        {mobileNavLink('/messages', 'Messages', 'chat')}
-        {mobileNavLink('/client-settings', 'Settings', 'settings')}
-      </>
-    );
-    if (user.role === 'professional') return (
-      <>
-        {mobileNavLink('/professional-dashboard', 'Browse Projects', 'dashboard')}
-        {mobileNavLink('/professional-settings', 'My Profile', 'person')}
-        {mobileNavLink('/messages', 'Messages', 'chat')}
-      </>
-    );
-    if (user.role === 'admin') return (
-      <>
-        {mobileNavLink('/admin', 'Dashboard', 'dashboard')}
-        {mobileNavLink('/admin/users', 'Users', 'group')}
-        {mobileNavLink('/admin/projects', 'Projects', 'folder_open')}
-        {mobileNavLink('/admin/settings', 'Settings', 'settings')}
-      </>
-    );
-    return null;
-  };
 
   const profileMenuItems =
     user?.role === 'client'
@@ -154,10 +93,10 @@ export default function Navbar() {
         ];
 
   return (
-    <nav ref={navRef} className="bg-[#fff8f5] w-full top-0 sticky border-b border-[#dcc1b5] z-50">
+    <nav className="bg-[#fff8f5] w-full top-0 sticky border-b border-[#dcc1b5] z-50">
       <div className="flex justify-between items-center h-20 px-4 md:px-10 max-w-[1280px] mx-auto">
 
-        {/* Logo + desktop nav links */}
+        {/* Logo + nav links */}
         <div className="flex items-center gap-8">
           <Link
             to="/"
@@ -202,14 +141,14 @@ export default function Navbar() {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-3">
           {user ? (
             <>
-              {/* Notification bell — always visible */}
+              {/* Notification bell — all roles */}
               <div ref={notifRef} className="relative">
                 <button
                   onClick={() => { setShowNotifDropdown(v => !v); setShowProfileMenu(false); }}
-                  className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
                   title="Notifications"
                 >
                   <span className="material-symbols-outlined">notifications</span>
@@ -227,10 +166,10 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Messages — desktop only */}
+              {/* Messages */}
               <Link
                 to="/messages"
-                className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors hidden md:flex min-h-[44px] min-w-[44px] items-center justify-center"
+                className="relative p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
                 title="Messages"
               >
                 <span className="material-symbols-outlined">chat</span>
@@ -241,20 +180,24 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* First name — desktop only */}
+              {/* First name */}
               <span className="hidden md:block text-sm font-medium text-[#56433a]">
                 {user.fullName?.split(' ')[0]}
               </span>
 
-              {/* Avatar + profile dropdown — desktop only */}
-              <div ref={profileRef} className="relative hidden md:block">
+              {/* Avatar + profile dropdown */}
+              <div ref={profileRef} className="relative">
                 <button
                   className="nav-avatar overflow-hidden"
                   style={{ padding: 0 }}
                   onClick={() => { setShowProfileMenu(v => !v); setShowNotifDropdown(false); }}
                 >
                   {user.profilePicture ? (
-                    <img src={user.profilePicture} alt={user.fullName} className="w-full h-full object-cover rounded-full" />
+                    <img
+                      src={user.profilePicture}
+                      alt={user.fullName}
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   ) : (
                     getInitials(user.fullName)
                   )}
@@ -262,10 +205,13 @@ export default function Navbar() {
 
                 {showProfileMenu && (
                   <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-lg border border-[#dcc1b5] z-50 overflow-hidden">
+                    {/* User info */}
                     <div className="px-4 py-3 border-b border-[#dcc1b5]">
                       <p className="text-sm font-semibold text-[#1e1b18] truncate">{user.fullName}</p>
                       <p className="text-xs text-[#56433a] truncate mt-0.5">{user.email}</p>
                     </div>
+
+                    {/* Links */}
                     <div className="py-1">
                       {profileMenuItems.map(item => (
                         <Link
@@ -282,6 +228,8 @@ export default function Navbar() {
                         </Link>
                       ))}
                     </div>
+
+                    {/* Logout */}
                     <div className="border-t border-[#dcc1b5] py-1">
                       <button
                         onClick={() => { setShowProfileMenu(false); logout(); }}
@@ -295,15 +243,6 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-
-              {/* Hamburger — mobile only */}
-              <button
-                className="flex md:hidden items-center justify-center min-h-[44px] min-w-[44px] p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
-                onClick={() => setMobileMenuOpen(v => !v)}
-                aria-label="Toggle menu"
-              >
-                <span className="material-symbols-outlined">{mobileMenuOpen ? 'close' : 'menu'}</span>
-              </button>
             </>
           ) : (
             <>
@@ -314,72 +253,11 @@ export default function Navbar() {
               >
                 Login
               </Link>
-              <Link to="/register" className="nav-register hidden md:inline-flex">Register</Link>
-
-              {/* Hamburger for logged-out users — mobile only */}
-              <button
-                className="flex md:hidden items-center justify-center min-h-[44px] min-w-[44px] p-2 text-[#56433a] hover:text-[#99420d] transition-colors"
-                onClick={() => setMobileMenuOpen(v => !v)}
-                aria-label="Toggle menu"
-              >
-                <span className="material-symbols-outlined">{mobileMenuOpen ? 'close' : 'menu'}</span>
-              </button>
+              <Link to="/register" className="nav-register">Register</Link>
             </>
           )}
         </div>
       </div>
-
-      {/* Mobile dropdown */}
-      {mobileMenuOpen && (
-        <div className="block md:hidden border-t border-[#dcc1b5] bg-[#fff8f5] px-4 pb-4 pt-2">
-          <div className="flex flex-col gap-1">
-            {getMobileNavLinks()}
-
-            {user ? (
-              <div className="border-t border-[#dcc1b5] mt-2 pt-3">
-                <div className="flex items-center gap-3 px-4 py-2 mb-1">
-                  <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(153,66,13,0.1)', border: '1px solid rgba(153,66,13,0.2)' }}>
-                    {user.profilePicture ? (
-                      <img src={user.profilePicture} alt={user.fullName} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-xs font-bold text-[#99420d]">{getInitials(user.fullName)}</span>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#1e1b18] truncate">{user.fullName}</p>
-                    <p className="text-xs text-[#56433a] truncate">{user.email}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => { setMobileMenuOpen(false); logout(); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[#ba1a1a] hover:bg-[rgba(186,26,26,0.04)] transition-colors min-h-[44px]"
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>logout</span>
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <div className="border-t border-[#dcc1b5] mt-2 pt-3 flex flex-col gap-2">
-                <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-3 px-4 text-center text-sm font-semibold text-[#56433a] border border-[#dcc1b5] rounded-xl hover:border-[#99420d] transition-colors min-h-[44px] flex items-center justify-center"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-3 px-4 text-center text-sm font-semibold text-white bg-[#99420d] rounded-xl hover:bg-[#7a3409] transition-colors min-h-[44px] flex items-center justify-center"
-                >
-                  Register
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </nav>
   );
 }

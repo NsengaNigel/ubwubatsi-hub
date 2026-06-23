@@ -64,10 +64,10 @@ export default function AllUsers() {
       <div className="flex flex-1">
         <AdminSidebar />
 
-        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
+        <main className="flex-1 p-8">
           <div className="max-w-5xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-2xl md:text-[32px] text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.01em' }}>All Users</h1>
+              <h1 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 700, letterSpacing: '-0.01em' }}>All Users</h1>
               <p className="text-base text-[#56433a] mt-1">Manage all registered users on the platform.</p>
             </div>
 
@@ -82,12 +82,12 @@ export default function AllUsers() {
                   onChange={e => setSearch(e.target.value)}
                 />
               </div>
-              <div className="flex gap-2 overflow-x-auto flex-nowrap pb-1">
+              <div className="flex gap-2">
                 {FILTERS.map(f => (
                   <button
                     key={f}
                     onClick={() => setActiveFilter(f)}
-                    className="text-xs font-semibold px-4 py-2 rounded-full border transition-colors flex-shrink-0"
+                    className="text-xs font-semibold px-4 py-2 rounded-full border transition-colors"
                     style={{
                       letterSpacing: '0.05em',
                       background: activeFilter === f ? '#99420d' : 'transparent',
@@ -112,113 +112,57 @@ export default function AllUsers() {
                 </div>
               </div>
             ) : (
-              <>
-                {/* Desktop table */}
-                <div className="card-shell overflow-hidden hidden md:block">
-                  <div style={{ background: '#fff8f5', borderRadius: 'calc(1.25rem - 5px)', overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
-                          {['Full Name', 'Email', 'Phone', 'Role', 'Verified', 'Registered', 'Action'].map(h => (
-                            <th key={h} className="text-xs font-semibold text-[#56433a] text-left px-5 py-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filtered.map((u, i) => {
-                          const badge = ROLE_BADGES[u.role] || ROLE_BADGES.client;
-                          return (
-                            <tr key={u._id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(220,193,181,0.5)' : 'none' }}>
-                              <td className="px-5 py-4 text-sm font-semibold text-[#1e1b18]">{u.fullName}</td>
-                              <td className="px-5 py-4 text-sm text-[#56433a]">{u.email}</td>
-                              <td className="px-5 py-4 text-sm text-[#56433a]">{u.phone || '—'}</td>
-                              <td className="px-5 py-4">
-                                <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: badge.background, color: badge.color, letterSpacing: '0.05em' }}>
-                                  {badge.label}
-                                </span>
-                              </td>
-                              <td className="px-5 py-4">
-                                {u.isVerified ? (
-                                  <span className="material-symbols-outlined fill text-[#3b6623]" style={{ fontSize: '20px' }}>check_circle</span>
-                                ) : (
-                                  <span className="material-symbols-outlined text-[#ba1a1a]" style={{ fontSize: '20px' }}>cancel</span>
-                                )}
-                              </td>
-                              <td className="px-5 py-4 text-sm text-[#56433a]">
-                                {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
-                              </td>
-                              <td className="px-5 py-4">
-                                {u.role !== 'admin' && (
-                                  <button
-                                    onClick={() => handleDelete(u._id)}
-                                    className="text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
-                                    style={{ background: 'transparent', cursor: 'pointer', letterSpacing: '0.04em' }}
-                                  >
-                                    Delete
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Mobile cards */}
-                <div className="flex flex-col gap-3 md:hidden">
-                  {filtered.map(u => {
-                    const badge = ROLE_BADGES[u.role] || ROLE_BADGES.client;
-                    return (
-                      <div key={u._id} className="card-shell">
-                        <div className="card-core" style={{ padding: '16px 20px' }}>
-                          <div className="flex items-start justify-between gap-3 mb-3">
-                            <div className="min-w-0">
-                              <p className="text-sm font-semibold text-[#1e1b18] truncate">{u.fullName}</p>
-                              <p className="text-xs text-[#56433a] truncate mt-0.5">{u.email}</p>
-                            </div>
-                            <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0" style={{ background: badge.background, color: badge.color }}>
-                              {badge.label}
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2 text-xs text-[#56433a] mb-3">
-                            <div>
-                              <span className="font-medium text-[#1e1b18]">Phone: </span>{u.phone || '—'}
-                            </div>
-                            <div>
-                              <span className="font-medium text-[#1e1b18]">Joined: </span>
-                              {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
-                            </div>
-                            <div className="flex items-center gap-1">
+              <div className="card-shell overflow-hidden">
+                <div style={{ background: '#fff8f5', borderRadius: 'calc(1.25rem - 5px)', overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
+                        {['Full Name', 'Email', 'Phone', 'Role', 'Verified', 'Registered', 'Action'].map(h => (
+                          <th key={h} className="text-xs font-semibold text-[#56433a] text-left px-5 py-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((u, i) => {
+                        const badge = ROLE_BADGES[u.role] || ROLE_BADGES.client;
+                        return (
+                          <tr key={u._id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(220,193,181,0.5)' : 'none' }}>
+                            <td className="px-5 py-4 text-sm font-semibold text-[#1e1b18]">{u.fullName}</td>
+                            <td className="px-5 py-4 text-sm text-[#56433a]">{u.email}</td>
+                            <td className="px-5 py-4 text-sm text-[#56433a]">{u.phone || '—'}</td>
+                            <td className="px-5 py-4">
+                              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: badge.background, color: badge.color, letterSpacing: '0.05em' }}>
+                                {badge.label}
+                              </span>
+                            </td>
+                            <td className="px-5 py-4">
                               {u.isVerified ? (
-                                <>
-                                  <span className="material-symbols-outlined fill text-[#3b6623]" style={{ fontSize: '14px' }}>check_circle</span>
-                                  <span className="text-[#3b6623]">Verified</span>
-                                </>
+                                <span className="material-symbols-outlined fill text-[#3b6623]" style={{ fontSize: '20px' }} title="Verified">check_circle</span>
                               ) : (
-                                <>
-                                  <span className="material-symbols-outlined text-[#ba1a1a]" style={{ fontSize: '14px' }}>cancel</span>
-                                  <span className="text-[#ba1a1a]">Unverified</span>
-                                </>
+                                <span className="material-symbols-outlined text-[#ba1a1a]" style={{ fontSize: '20px' }} title="Not verified">cancel</span>
                               )}
-                            </div>
-                          </div>
-                          {u.role !== 'admin' && (
-                            <button
-                              onClick={() => handleDelete(u._id)}
-                              className="w-full text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-2.5 rounded-full border border-[#ba1a1a] min-h-[40px]"
-                              style={{ background: 'transparent', cursor: 'pointer' }}
-                            >
-                              Delete User
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                            </td>
+                            <td className="px-5 py-4 text-sm text-[#56433a]">
+                              {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
+                            </td>
+                            <td className="px-5 py-4">
+                              {u.role !== 'admin' && (
+                                <button
+                                  onClick={() => handleDelete(u._id)}
+                                  className="text-xs font-semibold text-[#ba1a1a] hover:text-white hover:bg-[#ba1a1a] transition-colors px-3 py-1.5 rounded-full border border-[#ba1a1a]"
+                                  style={{ background: 'transparent', cursor: 'pointer', letterSpacing: '0.04em' }}
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </main>

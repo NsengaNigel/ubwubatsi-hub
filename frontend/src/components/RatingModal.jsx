@@ -36,12 +36,12 @@ export default function RatingModal({ project, professionalName, onClose, onSucc
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(30,27,24,0.5)', backdropFilter: 'blur(6px)' }}
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div
-        className="bg-[#fff8f5] w-full md:max-w-md md:rounded-2xl rounded-t-2xl overflow-hidden fade-up du-1"
+        className="bg-[#fff8f5] rounded-2xl w-full max-w-md overflow-hidden fade-up du-1"
         style={{ boxShadow: '0 24px 48px -12px rgba(30,27,24,0.25)' }}
       >
         {/* Header */}

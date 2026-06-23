@@ -38,9 +38,9 @@ export default function Messages() {
   const [loadingConvos, setLoadingConvos] = useState(true);
   const [loadingMsgs, setLoadingMsgs] = useState(false);
   const [sending, setSending] = useState(false);
-  const [mobileView, setMobileView] = useState('list');
   const bottomRef = useRef(null);
 
+  // Load conversations on mount
   useEffect(() => {
     api.get('/api/messages/conversations')
       .then(res => setConversations(res.data))
@@ -48,13 +48,14 @@ export default function Messages() {
       .finally(() => setLoadingConvos(false));
   }, []);
 
+  // If navigated here with a conversationId in state, open it
   useEffect(() => {
     if (location.state?.conversationId) {
       setActiveId(location.state.conversationId);
-      setMobileView('thread');
     }
   }, [location.state]);
 
+  // Load messages when active conversation changes
   useEffect(() => {
     if (!activeId) return;
     setLoadingMsgs(true);
@@ -64,6 +65,7 @@ export default function Messages() {
       .finally(() => setLoadingMsgs(false));
   }, [activeId]);
 
+  // Join socket room when active conversation changes
   useEffect(() => {
     if (!socket || !activeId) return;
     socket.emit('join_conversation', activeId);
@@ -72,6 +74,7 @@ export default function Messages() {
       if (msg.conversationId === activeId) {
         setMessages(prev => [...prev, msg]);
       }
+      // Update conversation preview
       setConversations(prev =>
         prev.map(c =>
           c._id === msg.conversationId
@@ -85,17 +88,13 @@ export default function Messages() {
     return () => socket.off('receive_message', handleReceive);
   }, [socket, activeId]);
 
+  // Scroll to bottom when messages load or new one arrives
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const getOtherParticipant = (convo) => {
     return convo.participants?.find(p => p._id !== user.id) || convo.participants?.[0];
-  };
-
-  const handleSelectConversation = (convoId) => {
-    setActiveId(convoId);
-    setMobileView('thread');
   };
 
   const handleSend = async (e) => {
@@ -107,7 +106,7 @@ export default function Messages() {
       socket?.emit('send_message', { ...msg, conversationId: activeId });
       setText('');
     } catch {
-      // silently fail
+      // silently fail — user can retry
     } finally {
       setSending(false);
     }
@@ -120,10 +119,10 @@ export default function Messages() {
     <div className="bg-[#fff8f5] text-[#1e1b18] min-h-screen flex flex-col">
       <Navbar />
 
-      <main className="flex-1 w-full max-w-[1280px] mx-auto px-0 md:px-10 py-0 md:py-6 flex gap-4 md:h-[calc(100vh-80px)]">
+      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-10 py-6 flex gap-4" style={{ height: 'calc(100vh - 80px)' }}>
 
-        {/* Conversations list — shown on mobile when mobileView=list, always on md+ */}
-        <div className={`${mobileView === 'list' ? 'flex' : 'hidden'} md:flex w-full md:w-80 flex-shrink-0 border-b md:border border-[#dcc1b5] md:rounded-2xl bg-white overflow-hidden flex-col`}>
+        {/* Conversations list */}
+        <div className="w-full md:w-80 flex-shrink-0 border border-[#dcc1b5] rounded-2xl bg-white overflow-hidden flex flex-col">
           <div className="px-5 py-4 border-b border-[#dcc1b5]">
             <h2 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '18px', fontWeight: 600, color: '#1e1b18' }}>
               Messages
@@ -147,8 +146,8 @@ export default function Messages() {
                 return (
                   <button
                     key={convo._id}
-                    onClick={() => handleSelectConversation(convo._id)}
-                    className={`w-full text-left flex items-center gap-3 px-4 py-3 border-b border-[#f3e8e4] transition-colors min-h-[64px] ${
+                    onClick={() => setActiveId(convo._id)}
+                    className={`w-full text-left flex items-center gap-3 px-4 py-3 border-b border-[#f3e8e4] transition-colors ${
                       isActive ? 'bg-[#fff0e8]' : 'hover:bg-[#fdf5f2]'
                     }`}
                   >
@@ -171,8 +170,8 @@ export default function Messages() {
           )}
         </div>
 
-        {/* Message thread — shown on mobile when mobileView=thread, always on md+ */}
-        <div className={`${mobileView === 'thread' ? 'flex' : 'hidden'} md:flex flex-1 border border-[#dcc1b5] md:rounded-2xl bg-white overflow-hidden flex-col`}>
+        {/* Message thread */}
+        <div className="flex-1 border border-[#dcc1b5] rounded-2xl bg-white overflow-hidden flex flex-col">
           {!activeId ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center">
               <span className="material-symbols-outlined text-[#dcc1b5]" style={{ fontSize: '56px' }}>forum</span>
@@ -181,16 +180,8 @@ export default function Messages() {
           ) : (
             <>
               {/* Header */}
-              <div className="px-4 md:px-5 py-4 border-b border-[#dcc1b5] flex items-center gap-3">
-                {/* Back button — mobile only */}
-                <button
-                  className="flex md:hidden items-center justify-center min-h-[44px] min-w-[44px] text-[#56433a] hover:text-[#99420d] transition-colors -ml-2"
-                  onClick={() => setMobileView('list')}
-                  aria-label="Back to conversations"
-                >
-                  <span className="material-symbols-outlined">arrow_back</span>
-                </button>
-                <div className="w-9 h-9 rounded-full bg-[#efe6e2] flex items-center justify-center flex-shrink-0">
+              <div className="px-5 py-4 border-b border-[#dcc1b5] flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#efe6e2] flex items-center justify-center">
                   <span className="text-sm font-semibold text-[#99420d]">{getInitials(otherUser?.fullName)}</span>
                 </div>
                 <div>
@@ -202,7 +193,7 @@ export default function Messages() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-4 md:px-5 py-4 flex flex-col gap-3">
+              <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
                 {loadingMsgs ? (
                   <div className="flex-1 flex items-center justify-center">
                     <div className="w-6 h-6 border-2 border-[#dcc1b5] border-t-[#99420d] rounded-full animate-spin" />
@@ -218,7 +209,7 @@ export default function Messages() {
                     return (
                       <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
                         <div
-                          className={`max-w-[80%] md:max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                          className={`max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                             isMine
                               ? 'bg-[#99420d] text-white rounded-br-sm'
                               : 'bg-[#f3e8e4] text-[#1e1b18] rounded-bl-sm'
@@ -237,21 +228,21 @@ export default function Messages() {
               </div>
 
               {/* Input */}
-              <form onSubmit={handleSend} className="px-4 md:px-5 py-3 border-t border-[#dcc1b5] flex gap-2 md:gap-3">
+              <form onSubmit={handleSend} className="px-5 py-4 border-t border-[#dcc1b5] flex gap-3">
                 <input
                   type="text"
                   value={text}
                   onChange={e => setText(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors min-h-[44px]"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-[#dcc1b5] bg-[#fff8f5] text-sm text-[#1e1b18] placeholder-[#a08070] focus:outline-none focus:border-[#99420d] transition-colors"
                 />
                 <button
                   type="submit"
                   disabled={!text.trim() || sending}
-                  className="px-4 md:px-5 py-2.5 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 min-h-[44px]"
+                  className="px-5 py-2.5 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>send</span>
-                  <span className="hidden sm:inline">Send</span>
+                  Send
                 </button>
               </form>
             </>

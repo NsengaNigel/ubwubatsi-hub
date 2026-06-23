@@ -54,10 +54,10 @@ export default function PendingVerifications() {
       <div className="flex flex-1">
         <AdminSidebar />
 
-        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
+        <main className="flex-1 p-8">
           <div className="max-w-5xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-2xl md:text-[32px] text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.01em' }}>
+              <h1 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 700, letterSpacing: '-0.01em' }}>
                 Pending Verifications
               </h1>
               <p className="text-base text-[#56433a] mt-1">Review and approve or reject professional registration requests.</p>
@@ -74,90 +74,69 @@ export default function PendingVerifications() {
                 </div>
               </div>
             ) : (
-              <>
-                {/* Desktop table */}
-                <div className="card-shell overflow-hidden hidden md:block">
-                  <div style={{ background: '#fff8f5', borderRadius: 'calc(1.25rem - 5px)', overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
-                          {['Full Name', 'Email', 'Phone', 'Reg. Number', 'Date', 'Actions'].map(h => (
-                            <th key={h} className="text-xs font-semibold text-[#56433a] text-left px-5 py-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {professionals.map((pro, i) => {
-                          const isVerified = verifiedIds.has(pro._id);
-                          return (
-                            <tr key={pro._id} style={{ borderBottom: i < professionals.length - 1 ? '1px solid rgba(220,193,181,0.5)' : 'none' }}>
-                              <td className="px-5 py-4">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm font-semibold text-[#1e1b18]">{pro.fullName}</span>
-                                  {isVerified && <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '16px' }}>verified</span>}
-                                </div>
-                              </td>
-                              <td className="px-5 py-4 text-sm text-[#56433a]">{pro.email}</td>
-                              <td className="px-5 py-4 text-sm text-[#56433a]">{pro.phone}</td>
-                              <td className="px-5 py-4 text-sm text-[#56433a]">{pro.registrationNumber || '—'}</td>
-                              <td className="px-5 py-4 text-sm text-[#56433a]">{pro.createdAt ? new Date(pro.createdAt).toLocaleDateString() : '—'}</td>
-                              <td className="px-5 py-4">
-                                {isVerified ? (
-                                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#3b6623]" style={{ background: '#e1efd8', borderRadius: '999px', padding: '3px 10px' }}>
-                                    <span className="material-symbols-outlined fill" style={{ fontSize: '13px' }}>verified</span>Verified
-                                  </span>
-                                ) : (
-                                  <div className="flex items-center gap-2">
-                                    <button onClick={() => handleApprove(pro._id)} className="text-xs font-semibold text-white px-3 py-1.5 rounded-full" style={{ background: '#99420d', border: 'none', cursor: 'pointer' }}>Approve</button>
-                                    <button onClick={() => handleReject(pro._id)} className="text-xs font-semibold text-[#56433a] px-3 py-1.5 rounded-full" style={{ border: '1px solid #dcc1b5', background: 'transparent', cursor: 'pointer' }}>Reject</button>
-                                  </div>
+              <div className="card-shell overflow-hidden">
+                <div style={{ background: '#fff8f5', borderRadius: 'calc(1.25rem - 5px)', overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #dcc1b5' }}>
+                        {['Full Name', 'Email', 'Phone', 'Reg. Number', 'Date', 'Actions'].map(h => (
+                          <th key={h} className="text-xs font-semibold text-[#56433a] text-left px-5 py-4" style={{ letterSpacing: '0.05em', textTransform: 'uppercase' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {professionals.map((pro, i) => {
+                        const isVerified = verifiedIds.has(pro._id);
+                        return (
+                          <tr key={pro._id} style={{ borderBottom: i < professionals.length - 1 ? '1px solid rgba(220,193,181,0.5)' : 'none' }}>
+                            <td className="px-5 py-4">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-[#1e1b18]">{pro.fullName}</span>
+                                {isVerified && (
+                                  <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '16px' }}>verified</span>
                                 )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                              </div>
+                            </td>
+                            <td className="px-5 py-4 text-sm text-[#56433a]">{pro.email}</td>
+                            <td className="px-5 py-4 text-sm text-[#56433a]">{pro.phone}</td>
+                            <td className="px-5 py-4 text-sm text-[#56433a]">{pro.registrationNumber || '—'}</td>
+                            <td className="px-5 py-4 text-sm text-[#56433a]">
+                              {pro.createdAt ? new Date(pro.createdAt).toLocaleDateString() : '—'}
+                            </td>
+                            <td className="px-5 py-4">
+                              {isVerified ? (
+                                <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#3b6623]" style={{ background: '#e1efd8', borderRadius: '999px', padding: '3px 10px' }}>
+                                  <span className="material-symbols-outlined fill" style={{ fontSize: '13px' }}>verified</span>
+                                  Verified
+                                </span>
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => handleApprove(pro._id)}
+                                    className="text-xs font-semibold text-white px-3 py-1.5 rounded-full transition-colors"
+                                    style={{ background: '#99420d', letterSpacing: '0.04em', border: 'none', cursor: 'pointer' }}
+                                    onMouseOver={e => e.currentTarget.style.background = '#7a3000'}
+                                    onMouseOut={e => e.currentTarget.style.background = '#99420d'}
+                                  >
+                                    Approve
+                                  </button>
+                                  <button
+                                    onClick={() => handleReject(pro._id)}
+                                    className="text-xs font-semibold text-[#56433a] px-3 py-1.5 rounded-full transition-colors"
+                                    style={{ border: '1px solid #dcc1b5', background: 'transparent', letterSpacing: '0.04em', cursor: 'pointer' }}
+                                  >
+                                    Reject
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
-
-                {/* Mobile cards */}
-                <div className="flex flex-col gap-3 md:hidden">
-                  {professionals.map(pro => {
-                    const isVerified = verifiedIds.has(pro._id);
-                    return (
-                      <div key={pro._id} className="card-shell">
-                        <div className="card-core" style={{ padding: '16px 20px' }}>
-                          <div className="flex items-center gap-2 mb-2">
-                            <p className="text-sm font-semibold text-[#1e1b18]">{pro.fullName}</p>
-                            {isVerified && <span className="material-symbols-outlined fill text-[#99420d]" style={{ fontSize: '16px' }}>verified</span>}
-                          </div>
-                          <div className="grid grid-cols-1 gap-1 text-xs text-[#56433a] mb-3">
-                            <div><span className="font-medium text-[#1e1b18]">Email: </span>{pro.email}</div>
-                            <div><span className="font-medium text-[#1e1b18]">Phone: </span>{pro.phone}</div>
-                            <div><span className="font-medium text-[#1e1b18]">Reg. Number: </span>{pro.registrationNumber || '—'}</div>
-                            <div><span className="font-medium text-[#1e1b18]">Applied: </span>{pro.createdAt ? new Date(pro.createdAt).toLocaleDateString() : '—'}</div>
-                          </div>
-                          {isVerified ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#3b6623]" style={{ background: '#e1efd8', borderRadius: '999px', padding: '6px 14px' }}>
-                              <span className="material-symbols-outlined fill" style={{ fontSize: '13px' }}>verified</span>Verified
-                            </span>
-                          ) : (
-                            <div className="flex gap-2">
-                              <button onClick={() => handleApprove(pro._id)} className="flex-1 text-xs font-semibold text-white py-2.5 rounded-full min-h-[40px]" style={{ background: '#99420d', border: 'none', cursor: 'pointer' }}>
-                                Approve
-                              </button>
-                              <button onClick={() => handleReject(pro._id)} className="flex-1 text-xs font-semibold text-[#56433a] py-2.5 rounded-full min-h-[40px]" style={{ border: '1px solid #dcc1b5', background: 'transparent', cursor: 'pointer' }}>
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
+              </div>
             )}
           </div>
         </main>

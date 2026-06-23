@@ -60,8 +60,8 @@ export default function AdminSettings() {
     <div className="bg-[#fff8f5] text-[#1e1b18] min-h-screen flex">
       <AdminSidebar />
 
-      <main className="flex-1 px-4 md:px-10 py-10 pb-24 md:pb-10 max-w-[820px]">
-        <h1 className="mb-8 text-2xl md:text-[32px]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 600, letterSpacing: '-0.01em' }}>
+      <main className="flex-1 px-6 md:px-10 py-10 max-w-[820px]">
+        <h1 className="mb-8" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', fontWeight: 600, letterSpacing: '-0.01em' }}>
           Admin Settings
         </h1>
 
@@ -98,7 +98,7 @@ export default function AdminSettings() {
                   <label className={labelCls}>Phone Number</label>
                   <input {...profileForm.register('phone')} type="tel" placeholder="+250 7XX XXX XXX" className={inputCls} />
                 </div>
-                <button type="submit" disabled={profileForm.formState.isSubmitting} className="w-full sm:self-start sm:w-auto px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 min-h-[44px]">
+                <button type="submit" disabled={profileForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
                   {profileForm.formState.isSubmitting ? 'Saving...' : 'Save Profile'}
                 </button>
               </form>
@@ -122,7 +122,7 @@ export default function AdminSettings() {
                   <label className={labelCls}>Confirm New Password</label>
                   <input {...passwordForm.register('confirmPassword', { required: true })} type="password" placeholder="Repeat new password" className={inputCls} />
                 </div>
-                <button type="submit" disabled={passwordForm.formState.isSubmitting} className="w-full sm:self-start sm:w-auto px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50 min-h-[44px]">
+                <button type="submit" disabled={passwordForm.formState.isSubmitting} className="self-start px-6 py-3 bg-[#99420d] text-white text-sm font-semibold rounded-xl hover:bg-[#7a3409] transition-colors disabled:opacity-50">
                   {passwordForm.formState.isSubmitting ? 'Updating...' : 'Update Password'}
                 </button>
               </form>

@@ -101,7 +101,6 @@ export default function Login() {
                 className="btn-primary-sm w-full justify-center mt-1"
                 type="submit"
                 disabled={isSubmitting}
-                style={{ minHeight: '44px' }}
               >
                 {isSubmitting ? 'Logging in…' : 'Log in'}
                 {!isSubmitting && (

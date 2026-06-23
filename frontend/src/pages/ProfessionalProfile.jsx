@@ -102,7 +102,7 @@ export default function ProfessionalProfile() {
                 </div>
                 <div className="flex-1 pt-2 sm:pt-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h1 className="text-[#1e1b18] text-2xl md:text-[32px]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", letterSpacing: '-0.01em', fontWeight: 600 }}>
+                    <h1 className="text-[#1e1b18]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '32px', letterSpacing: '-0.01em', fontWeight: 600 }}>
                       {pro.fullName || 'Professional'}
                     </h1>
                     {pro.isVerified && (
@@ -226,7 +226,7 @@ export default function ProfessionalProfile() {
           {/* Right sidebar */}
           <div className="lg:col-span-4 flex flex-col gap-5">
 
-            <div className="sidebar-card lg:sticky top-28 fade-up du-5">
+            <div className="sidebar-card sticky top-28 fade-up du-5">
               <div className="sidebar-card-core">
                 <h3 className="text-[#1e1b18] mb-1" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>
                   Hire {pro.fullName?.split(' ')[0] || 'this Professional'}

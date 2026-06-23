@@ -60,7 +60,7 @@ export default function PostProject() {
 
           {kubakaLink ? (
             <div className="card-shell fade-up du-2">
-              <div className="card-core">
+              <div className="card-core" style={{ padding: '36px 40px' }}>
                 <div className="flex flex-col items-center gap-5 text-center py-4">
                   <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: 'rgba(153,66,13,0.1)' }}>
                     <span className="material-symbols-outlined text-[#99420d]" style={{ fontSize: '28px' }}>check_circle</span>
@@ -93,7 +93,7 @@ export default function PostProject() {
             </div>
           ) : (
             <div className="card-shell fade-up du-2">
-              <div className="card-core">
+              <div className="card-core" style={{ padding: '36px 40px' }}>
                 {preferredProfessionalName && (
                   <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl" style={{ background: 'rgba(153,66,13,0.06)', border: '1px solid rgba(153,66,13,0.15)' }}>
                     <span className="material-symbols-outlined text-[#99420d]" style={{ fontSize: '18px' }}>person_check</span>
@@ -164,7 +164,7 @@ export default function PostProject() {
                     />
                   </div>
 
-                  <div className="flex flex-col gap-3 pt-2 border-t border-[#dcc1b5]">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-2 border-t border-[#dcc1b5]">
                     <a
                       className="flex items-center gap-1.5 text-sm text-[#56433a] hover:text-[#99420d] transition-colors"
                       href="https://kubaka.gov.rw"
@@ -175,7 +175,7 @@ export default function PostProject() {
                       View zoning regulations on KUBAKA
                       <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>open_in_new</span>
                     </a>
-                    <button className="btn-primary-sm w-full justify-center md:w-auto md:self-end" type="submit" disabled={isSubmitting} style={{ minHeight: '44px' }}>
+                    <button className="btn-primary-sm" type="submit" disabled={isSubmitting}>
                       {isSubmitting ? 'Submitting…' : 'Submit project'}
                       {!isSubmitting && (
                         <span className="btn-icon">
