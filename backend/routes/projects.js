@@ -112,6 +112,7 @@ router.get('/active/:professionalId', auth, async (req, res) => {
 router.get('/', auth, async (req, res) => {
   try {
     const projects = await Project.find()
+      .select('title category location budget description clientId kubakaLink status createdAt')
       .populate('clientId', 'fullName email')
       .sort({ createdAt: -1 });
     res.json(projects);

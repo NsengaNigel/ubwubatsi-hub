@@ -11,7 +11,13 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     if (user) {
-      const s = io('https://ubwubatsi-hub.onrender.com', { transports: ['websocket'] });
+      const s = io('https://ubwubatsi-hub.onrender.com', {
+        transports: ['websocket'],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+      });
       socketRef.current = s;
 
       s.on('connect', () => {

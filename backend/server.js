@@ -3,6 +3,7 @@ const http = require('http');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const rateLimit = require('express-rate-limit');
 const { Server } = require('socket.io');
 const { setIO } = require('./utils/socketIo');
 
@@ -23,9 +24,29 @@ setIO(io);
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { message: 'Too many requests, please try again later.' },
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { message: 'Too many login attempts, please try again later.' },
+});
+
+app.use('/api/', limiter);
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+
+mongoose.connect(process.env.MONGODB_URI, {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
   .then(() => console.log('MongoDB Atlas connected successfully'))
-  .catch((err) => console.log('MongoDB connection error:', err));
+  .catch((err) => console.error('MongoDB connection error:', err));
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
@@ -67,7 +88,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected');
+    socket.removeAllListeners();
+    console.log('User disconnected and cleaned up');
   });
 });
 

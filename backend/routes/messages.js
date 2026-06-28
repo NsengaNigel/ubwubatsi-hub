@@ -21,7 +21,8 @@ router.get('/unread-count', auth, async (req, res) => {
 router.get('/conversations', auth, async (req, res) => {
   try {
     const conversations = await Conversation.find({ participants: req.user.userId })
-      .populate('participants', 'fullName email')
+      .select('participants projectId lastMessage lastMessageAt')
+      .populate('participants', 'fullName email profilePicture')
       .sort({ lastMessageAt: -1 });
     res.json(conversations);
   } catch (error) {

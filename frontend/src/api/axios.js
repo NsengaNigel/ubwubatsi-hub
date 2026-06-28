@@ -14,9 +14,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('ubwubatsi_token');
-      localStorage.removeItem('ubwubatsi_user');
-      window.location.href = '/login';
+      const requestUrl = error.config?.url || '';
+      if (!requestUrl.includes('/auth/login') && !requestUrl.includes('/auth/register')) {
+        localStorage.clear();
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

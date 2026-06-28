@@ -18,6 +18,7 @@ router.get('/unread-count', auth, async (req, res) => {
 router.get('/', auth, async (req, res) => {
   try {
     const notifications = await Notification.find({ userId: req.user.userId })
+      .select('type title message link read createdAt')
       .sort({ createdAt: -1 })
       .limit(20);
     res.json(notifications);

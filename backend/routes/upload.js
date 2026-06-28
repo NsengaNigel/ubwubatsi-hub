@@ -24,10 +24,38 @@ const upload = multer({
 
 function uploadToCloudinary(buffer, folder) {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream({ folder }, (error, result) => {
-      if (result) resolve(result);
-      else reject(error);
-    });
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        transformation: [
+          { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+          { quality: 'auto', fetch_format: 'auto' },
+        ],
+      },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
+
+function uploadPortfolioToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        transformation: [
+          { width: 800, height: 600, crop: 'limit' },
+          { quality: 'auto', fetch_format: 'auto' },
+        ],
+      },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }
@@ -74,7 +102,7 @@ router.post('/portfolio', auth, upload.array('portfolioImages', 5), async (req, 
     }
 
     const uploads = await Promise.all(
-      req.files.map(file => uploadToCloudinary(file.buffer, 'ubwubatsi/portfolio'))
+      req.files.map(file => uploadPortfolioToCloudinary(file.buffer, 'ubwubatsi/portfolio'))
     );
     const urls = uploads.map(r => r.secure_url);
 

@@ -23,10 +23,14 @@ function mergeProfile(user, profile) {
 router.get('/', auth, async (req, res) => {
   try {
     const { specialty, location } = req.query;
-    const users = await User.find({ role: 'professional', isVerified: true }, { password: 0 }).sort({ createdAt: -1 });
+    const users = await User.find(
+      { role: 'professional', isVerified: true },
+      'fullName email profilePicture isVerified createdAt'
+    ).sort({ createdAt: -1 });
     const results = await Promise.all(
       users.map(async (user) => {
-        const profile = await Professional.findOne({ userId: user._id });
+        const profile = await Professional.findOne({ userId: user._id })
+          .select('specialty bio location profilePicture portfolioImages certifications averageRating totalReviews');
         return mergeProfile(user, profile);
       })
     );

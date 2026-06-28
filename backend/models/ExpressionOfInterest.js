@@ -11,5 +11,7 @@ const expressionOfInterestSchema = new Schema({
 });
 
 expressionOfInterestSchema.index({ projectId: 1, professionalId: 1 }, { unique: true });
+expressionOfInterestSchema.index({ professionalId: 1 });
+expressionOfInterestSchema.index({ clientId: 1 });
 
 module.exports = mongoose.model('ExpressionOfInterest', expressionOfInterestSchema);
