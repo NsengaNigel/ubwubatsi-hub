@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import ProjectCompletionPanel from '../components/ProjectCompletionPanel';
 import RatingModal from '../components/RatingModal';
 
@@ -17,21 +18,6 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-RW', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-[#dcc1b5] py-8 mt-auto">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-3">
-        <span className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</span>
-        <span className="text-sm text-[#56433a]">© 2024 Ubwubatsi Hub. Building Rwanda with Integrity.</span>
-        <div className="flex gap-5">
-          <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Terms</a>
-          <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Privacy</a>
-          <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Contact</a>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 const STATUS_STYLES = {
   open: { background: 'rgba(227,242,253,0.9)', color: '#0d47a1', label: 'Open' },

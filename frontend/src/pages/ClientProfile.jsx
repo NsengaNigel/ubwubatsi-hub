@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -223,17 +224,7 @@ export default function ClientProfile() {
         </div>
       </main>
 
-      <footer className="border-t border-[#dcc1b5] py-10 mt-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-10 max-w-[1280px] mx-auto gap-4">
-          <span className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</span>
-          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Terms of Service</a>
-            <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Privacy Policy</a>
-            <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Contact Support</a>
-          </nav>
-          <span className="text-sm text-[#56433a]">© 2024 Ubwubatsi Hub. Building Rwanda with Integrity.</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

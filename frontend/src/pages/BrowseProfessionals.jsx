@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import StarRating from '../components/StarRating';
 
 function getInitials(name) {
@@ -177,18 +178,7 @@ export default function BrowseProfessionals() {
         )}
       </main>
 
-      <footer className="bg-[#e9e1dc] w-full py-8 border-t border-[#dcc1b5]">
-        <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-10 max-w-[1280px] mx-auto gap-4">
-          <div className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</div>
-          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            <a className="text-sm text-[#56433a] hover:text-[#934b19] transition-colors" href="#">Terms of Service</a>
-            <a className="text-sm text-[#56433a] hover:text-[#934b19] transition-colors" href="#">Privacy Policy</a>
-            <a className="text-sm text-[#56433a] hover:text-[#934b19] transition-colors" href="#">Contact Support</a>
-            <a className="text-sm text-[#56433a] hover:text-[#934b19] transition-colors" href="#">Rwandan Institute of Architects</a>
-          </nav>
-          <div className="text-sm text-[#56433a]">© 2024 Ubwubatsi Hub. Building Rwanda with Integrity.</div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

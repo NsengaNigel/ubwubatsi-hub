@@ -1,22 +1,6 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-
-function Footer() {
-  return (
-    <footer className="border-t border-[#dcc1b5] py-10">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-4">
-        <span className="font-bold text-[#99420d]" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px' }}>Ubwubatsi Hub</span>
-        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-          <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Terms of Service</a>
-          <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Privacy Policy</a>
-          <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Contact Support</a>
-          <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Rwandan Institute of Architects</a>
-        </nav>
-        <span className="text-sm text-[#56433a]">© 2024 Ubwubatsi Hub. Building Rwanda with Integrity.</span>
-      </div>
-    </footer>
-  );
-}
+import Footer from '../components/Footer';
 
 export default function Landing() {
   return (
@@ -25,10 +9,8 @@ export default function Landing() {
 
       {/* Hero */}
       <section className="max-w-[1280px] mx-auto px-4 md:px-10 pt-20 pb-24 md:pt-28 md:pb-32">
-        <div className="grid md:grid-cols-12 gap-6 items-center">
-
-          {/* Left: text */}
-          <div className="md:col-span-7 flex flex-col gap-6">
+        <div className="flex flex-col gap-6 max-w-2xl">
+          <div className="flex flex-col gap-6">
             <span className="eyebrow fade-up du-1">
               <span className="material-symbols-outlined fill" style={{ fontSize: '12px' }}>verified</span>
               Verified professionals only
@@ -45,31 +27,13 @@ export default function Landing() {
               Connecting homeowners with Rwanda's top construction professionals. Build with trusted experts, transparent pricing, and guaranteed quality.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 fade-up du-4">
-              <Link to="/post-project" className="btn-primary w-full sm:w-auto justify-center">
+              <Link to="/register" className="btn-primary w-full sm:w-auto justify-center">
                 Post a Project
                 <span className="btn-icon">
                   <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
                 </span>
               </Link>
               <Link to="/browse-professionals" className="btn-outline w-full sm:w-auto justify-center">Find Professionals</Link>
-            </div>
-          </div>
-
-          {/* Right: stats panel */}
-          <div className="md:col-span-5 mt-10 md:mt-0 fade-up du-5">
-            <div className="stat-shell">
-              <div className="stat-row" style={{ background: '#fff8f5' }}>
-                <p className="text-[#99420d] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.02em', fontSize: 'clamp(32px, 6vw, 48px)' }}>500+</p>
-                <p className="text-sm text-[#56433a] mt-2">Verified architects &amp; engineers registered on the platform</p>
-              </div>
-              <div className="stat-row" style={{ background: 'rgba(245,236,231,0.5)' }}>
-                <p className="text-[#1e1b18] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.02em', fontSize: 'clamp(32px, 6vw, 48px)' }}>200+</p>
-                <p className="text-sm text-[#56433a] mt-2">Projects completed across Rwanda</p>
-              </div>
-              <div className="stat-row" style={{ background: '#fff8f5' }}>
-                <p className="text-[#1e1b18] leading-none" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontWeight: 700, letterSpacing: '-0.02em', fontSize: 'clamp(32px, 6vw, 48px)' }}>48h</p>
-                <p className="text-sm text-[#56433a] mt-2">Average response time from professionals</p>
-              </div>
             </div>
           </div>
 
@@ -100,12 +64,12 @@ export default function Landing() {
             <div className="step-card">
               <span className="step-num">02</span>
               <h3 className="text-[#1e1b18] mt-5 mb-3" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>Get matched</h3>
-              <p className="text-base text-[#56433a]">Receive proposals from verified architects and engineers. Compare portfolios, read reviews, and select the right expert.</p>
+              <p className="text-base text-[#56433a]">Receive expressions of interest from verified architects and engineers. Compare portfolios, read reviews, and select the right expert.</p>
             </div>
             <div className="step-card">
               <span className="step-num">03</span>
               <h3 className="text-[#1e1b18] mt-5 mb-3" style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '24px', fontWeight: 600 }}>Build with confidence</h3>
-              <p className="text-base text-[#56433a]">Manage your project through our platform. Secure milestones, track progress, and communicate directly with your team.</p>
+              <p className="text-base text-[#56433a]">Communicate directly with your chosen professional, track progress, and leave a review when the project is complete.</p>
             </div>
           </div>
         </div>

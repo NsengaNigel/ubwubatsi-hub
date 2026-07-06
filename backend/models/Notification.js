@@ -5,7 +5,7 @@ const notificationSchema = new Schema({
   userId: { type: ObjectId, ref: 'User', required: true },
   type: {
     type: String,
-    enum: ['expression_of_interest', 'expression_accepted', 'expression_rejected', 'new_message', 'profile_verified', 'project_in_progress', 'new_review'],
+    enum: ['expression_of_interest', 'expression_accepted', 'expression_rejected', 'new_message', 'profile_verified', 'project_in_progress', 'new_review', 'new_project', 'new_user_signup'],
     required: true,
   },
   title: { type: String, required: true },

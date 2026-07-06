@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
+import Footer from '../components/Footer';
 
 export default function PostProject() {
   const navigate = useNavigate();
@@ -193,15 +194,7 @@ export default function PostProject() {
         </div>
       </main>
 
-      <footer className="border-t border-[#dcc1b5] py-8 mt-auto">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-3">
-          <span className="text-sm text-[#56433a]">© 2024 Ubwubatsi Hub. Building Rwanda with Integrity.</span>
-          <div className="flex gap-5">
-            <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Terms of Service</a>
-            <a className="text-sm text-[#56433a] hover:text-[#99420d] transition-colors" href="#">Privacy Policy</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Project = require('../models/Project');
 const auth = require('../middleware/auth');
 
 function userShape(user) {
@@ -18,6 +19,20 @@ function userShape(user) {
     location: user.location,
   };
 }
+
+// GET /api/auth/stats — public, no auth required
+router.get('/stats', async (req, res) => {
+  try {
+    const [totalProfessionals, totalClients, totalProjects] = await Promise.all([
+      User.countDocuments({ role: 'professional', isVerified: true }),
+      User.countDocuments({ role: 'client' }),
+      Project.countDocuments(),
+    ]);
+    res.json({ totalProfessionals, totalClients, totalProjects });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 router.post('/register', async (req, res) => {
   try {
