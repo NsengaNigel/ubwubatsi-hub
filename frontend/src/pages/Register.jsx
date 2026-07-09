@@ -10,7 +10,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [role, setRole] = useState('client');
   const [error, setError] = useState('');
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm();
+  const { register, handleSubmit, formState: { isSubmitting, errors } } = useForm();
 
   const onSubmit = async ({ fullName, email, phone, password, registrationNumber }) => {
     setError('');
@@ -80,12 +80,33 @@ export default function Register() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }} htmlFor="email">Email address</label>
-                  <input className="input-field" id="email" type="email" placeholder="you@example.com" {...register('email', { required: true })} />
+                  <input
+                    className="input-field"
+                    id="email"
+                    type="email"
+                    placeholder="yourname@example.com"
+                    {...register('email', {
+                      required: 'Email is required',
+                      minLength: { value: 6, message: 'Enter a valid email address' },
+                      pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email address' },
+                    })}
+                  />
+                  {errors.email && <p className="text-xs text-[#ba1a1a] mt-0.5">{errors.email.message}</p>}
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }} htmlFor="phone">Phone number</label>
-                  <input className="input-field" id="phone" type="tel" placeholder="+250 7XX XXX XXX" {...register('phone', { required: true })} />
+                  <input
+                    className="input-field"
+                    id="phone"
+                    type="tel"
+                    placeholder="+250791540119 or 0791540119"
+                    {...register('phone', {
+                      required: 'Phone number is required',
+                      pattern: { value: /^(\+250|0)7[2389]\d{7}$/, message: 'Enter a valid Rwandan phone number e.g. +250791540119 or 0791540119' },
+                    })}
+                  />
+                  {errors.phone && <p className="text-xs text-[#ba1a1a] mt-0.5">{errors.phone.message}</p>}
                 </div>
 
                 {role === 'professional' && (
@@ -93,7 +114,21 @@ export default function Register() {
                     <label className="text-xs font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }} htmlFor="regNumber">
                       Registration number <span className="text-[#56433a] font-normal">(RIA / Engineers Rwanda)</span>
                     </label>
-                    <input className="input-field" id="regNumber" type="text" placeholder="RIA/XXXX/2024" {...register('registrationNumber')} />
+                    <input
+                      className="input-field"
+                      id="regNumber"
+                      type="text"
+                      placeholder="A2121/EC/IER/2024 or RIA-2024-001"
+                      {...register('registrationNumber', {
+                        required: 'Registration number is required',
+                        pattern: {
+                          value: /^([A-Z]\d+\/[A-Z]{2}\/[A-Z]{2,4}\/\d{4}|RIA-\d{4}-\d{3})$/,
+                          message: 'Enter a valid registration number e.g. A2121/EC/IER/2024 for engineers or RIA-2024-001 for architects',
+                        },
+                      })}
+                    />
+                    {errors.registrationNumber && <p className="text-xs text-[#ba1a1a] mt-0.5">{errors.registrationNumber.message}</p>}
+                    <p className="text-xs text-[#897268]">Engineers Rwanda: A2121/EC/IER/2024 · RIA architects: RIA-2024-001</p>
                   </div>
                 )}
 

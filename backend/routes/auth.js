@@ -43,8 +43,24 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
+    const rwandaPhoneRegex = /^(\+250|0)7[2389]\d{7}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const regNumberRegex = /^([A-Z]\d+\/[A-Z]{2}\/[A-Z]{2,4}\/\d{4}|RIA-\d{4}-\d{3})$/;
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Enter a valid email address' });
+    }
+
+    if (!rwandaPhoneRegex.test(phone)) {
+      return res.status(400).json({ message: 'Enter a valid Rwandan phone number' });
+    }
+
     if (role === 'professional' && !registrationNumber) {
       return res.status(400).json({ message: 'Registration number is required for professionals' });
+    }
+
+    if (role === 'professional' && registrationNumber && !regNumberRegex.test(registrationNumber)) {
+      return res.status(400).json({ message: 'Enter a valid registration number e.g. A2121/EC/IER/2024 or RIA-2024-001' });
     }
 
     const salt = await bcrypt.genSalt(10);
