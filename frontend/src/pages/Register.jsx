@@ -12,11 +12,14 @@ export default function Register() {
   const [error, setError] = useState('');
   const { register, handleSubmit, formState: { isSubmitting, errors } } = useForm();
 
-  const onSubmit = async ({ fullName, email, phone, password, registrationNumber }) => {
+  const onSubmit = async ({ fullName, email, phone, password, registrationNumber, specialty }) => {
     setError('');
     try {
       const payload = { fullName, email, phone, password, role };
-      if (role === 'professional') payload.registrationNumber = registrationNumber;
+      if (role === 'professional') {
+        payload.registrationNumber = registrationNumber;
+        payload.specialty = specialty;
+      }
       const user = await registerUser(payload);
       toast.success('Account created successfully!');
       if (user.role === 'professional') navigate('/pending-verification');
@@ -110,26 +113,46 @@ export default function Register() {
                 </div>
 
                 {role === 'professional' && (
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }} htmlFor="regNumber">
-                      Registration number <span className="text-[#56433a] font-normal">(RIA / Engineers Rwanda)</span>
-                    </label>
-                    <input
-                      className="input-field"
-                      id="regNumber"
-                      type="text"
-                      placeholder="A2121/EC/IER/2024 or RIA-2024-001"
-                      {...register('registrationNumber', {
-                        required: 'Registration number is required',
-                        pattern: {
-                          value: /^([A-Z]\d+\/[A-Z]{2}\/[A-Z]{2,4}\/\d{4}|RIA-\d{4}-\d{3})$/,
-                          message: 'Enter a valid registration number e.g. A2121/EC/IER/2024 for engineers or RIA-2024-001 for architects',
-                        },
-                      })}
-                    />
-                    {errors.registrationNumber && <p className="text-xs text-[#ba1a1a] mt-0.5">{errors.registrationNumber.message}</p>}
-                    <p className="text-xs text-[#897268]">Engineers Rwanda: A2121/EC/IER/2024 · RIA architects: RIA-2024-001</p>
-                  </div>
+                  <>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }} htmlFor="specialty">Specialty</label>
+                      <div className="relative">
+                        <select
+                          id="specialty"
+                          className="input-field appearance-none pr-10"
+                          {...register('specialty', { required: 'Please select your specialty' })}
+                        >
+                          <option value="">Select your specialty</option>
+                          <option value="Architect">Architect</option>
+                          <option value="Civil Engineer">Civil Engineer</option>
+                          <option value="Both">Both (Architect & Engineer)</option>
+                        </select>
+                        <span className="material-symbols-outlined pointer-events-none absolute text-[#56433a]" style={{ right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '18px' }}>expand_more</span>
+                      </div>
+                      {errors.specialty && <p className="text-xs text-[#ba1a1a] mt-0.5">{errors.specialty.message}</p>}
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-semibold text-[#1e1b18]" style={{ letterSpacing: '0.05em' }} htmlFor="regNumber">
+                        Registration number <span className="text-[#56433a] font-normal">(RIA / Engineers Rwanda)</span>
+                      </label>
+                      <input
+                        className="input-field"
+                        id="regNumber"
+                        type="text"
+                        placeholder="A2121/EC/IER/2024 or RIA-2024-001"
+                        {...register('registrationNumber', {
+                          required: 'Registration number is required',
+                          pattern: {
+                            value: /^([A-Z]\d+\/[A-Z]{2}\/[A-Z]{2,4}\/\d{4}|RIA-\d{4}-\d{3})$/,
+                            message: 'Enter a valid registration number e.g. A2121/EC/IER/2024 for engineers or RIA-2024-001 for architects',
+                          },
+                        })}
+                      />
+                      {errors.registrationNumber && <p className="text-xs text-[#ba1a1a] mt-0.5">{errors.registrationNumber.message}</p>}
+                      <p className="text-xs text-[#897268]">Engineers Rwanda: A2121/EC/IER/2024 · RIA architects: RIA-2024-001</p>
+                    </div>
+                  </>
                 )}
 
                 <div className="flex flex-col gap-1.5">
@@ -147,6 +170,10 @@ export default function Register() {
                     </span>
                   )}
                 </button>
+                <p className="text-center text-xs text-[#897268]">
+                  By registering you agree to our{' '}
+                  <Link to="/privacy-policy" className="text-[#99420d] hover:underline">Privacy Policy</Link>
+                </p>
               </form>
 
               <p className="text-center text-sm text-[#56433a] mt-7 pt-5 border-t border-[#dcc1b5]">

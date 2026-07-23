@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Project = require('../models/Project');
+const Professional = require('../models/Professional');
 const auth = require('../middleware/auth');
 
 function userShape(user) {
@@ -36,7 +37,7 @@ router.get('/stats', async (req, res) => {
 
 router.post('/register', async (req, res) => {
   try {
-    const { fullName, email, phone, password, role, registrationNumber } = req.body;
+    const { fullName, email, phone, password, role, registrationNumber, specialty } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -77,6 +78,10 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
+
+    if (role === 'professional') {
+      await Professional.create({ userId: user._id, specialty: specialty || null });
+    }
 
     const token = jwt.sign(
       { userId: user._id, role: user.role },

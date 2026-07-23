@@ -8,6 +8,7 @@ import AdminRoute from './components/AdminRoute';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import PendingVerification from './pages/PendingVerification';
 import ClientDashboard from './pages/ClientDashboard';
 import ClientProfile from './pages/ClientProfile';
@@ -51,6 +52,7 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
             {/* Protected */}
             <Route path="/pending-verification" element={<ProtectedRoute><PendingVerification /></ProtectedRoute>} />

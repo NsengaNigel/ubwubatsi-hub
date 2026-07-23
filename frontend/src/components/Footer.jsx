@@ -39,6 +39,10 @@ export default function Footer() {
               onMouseEnter={e => e.target.style.color = '#fff'}
               onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.8)'}
             >Register</Link>
+            <Link to="/privacy-policy" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', textDecoration: 'none', transition: 'color 0.15s' }}
+              onMouseEnter={e => e.target.style.color = '#fff'}
+              onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.8)'}
+            >Privacy Policy</Link>
           </nav>
         </div>
 

@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
@@ -10,7 +11,25 @@ const inputCls = "w-full px-4 py-3 rounded-xl border border-[#dcc1b5] bg-[#fff8f
 const labelCls = "text-sm font-medium text-[#1e1b18]";
 
 export default function ClientSettings() {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
+  const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await api.delete('/api/users/account', { data: { password: deletePassword } });
+      toast.success('Account deleted');
+      logout();
+      navigate('/');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete account');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const profileForm = useForm();
   const passwordForm = useForm();
@@ -129,8 +148,71 @@ export default function ClientSettings() {
             </div>
           </section>
 
+          {/* Danger Zone */}
+          <section style={{ border: '1px solid rgba(186,26,26,0.2)', borderRadius: '16px' }}>
+            <div style={{ padding: '20px 24px' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#ba1a1a' }}>warning</span>
+                <h2 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 600, color: '#ba1a1a' }}>Danger Zone</h2>
+              </div>
+              <p className="text-sm text-[#56433a] mb-5" style={{ maxWidth: '48ch', lineHeight: 1.6 }}>
+                Deleting your account is permanent and cannot be undone. All your projects, messages, and profile data will be removed immediately.
+              </p>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="px-5 py-2.5 text-white text-sm font-semibold rounded-xl transition-colors min-h-[44px]"
+                style={{ background: '#ba1a1a' }}
+                onMouseEnter={e => e.currentTarget.style.background = '#9b1616'}
+                onMouseLeave={e => e.currentTarget.style.background = '#ba1a1a'}
+              >
+                Delete My Account
+              </button>
+            </div>
+          </section>
+
         </div>
       </main>
+
+      {/* Delete confirmation modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(30,27,24,0.6)' }}>
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl" style={{ border: '1px solid #dcc1b5' }}>
+            <h3 style={{ fontFamily: "'Hanken Grotesk',sans-serif", fontSize: '20px', fontWeight: 700, color: '#1e1b18' }} className="mb-2">
+              Delete Account
+            </h3>
+            <p className="text-sm text-[#56433a] mb-5" style={{ lineHeight: 1.6 }}>
+              This cannot be undone. All your data will be permanently removed. Enter your password to confirm.
+            </p>
+            <div className="flex flex-col gap-1.5 mb-5">
+              <label className={labelCls}>Password</label>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={e => setDeletePassword(e.target.value)}
+                placeholder="Enter your password"
+                className={inputCls}
+                autoFocus
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleDeleteAccount}
+                disabled={!deletePassword || deleting}
+                className="flex-1 py-3 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-40 min-h-[44px]"
+                style={{ background: '#ba1a1a' }}
+              >
+                {deleting ? 'Deleting...' : 'Yes, delete my account'}
+              </button>
+              <button
+                onClick={() => { setShowDeleteModal(false); setDeletePassword(''); }}
+                className="flex-1 py-3 text-sm font-semibold text-[#56433a] rounded-xl border border-[#dcc1b5] hover:bg-[#f5ede8] transition-colors min-h-[44px]"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
