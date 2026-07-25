@@ -184,12 +184,12 @@ export default function ClientSettings() {
               This cannot be undone. All your data will be permanently removed. Enter your password to confirm.
             </p>
             <div className="flex flex-col gap-1.5 mb-5">
-              <label className={labelCls}>Password</label>
+              <label className={labelCls}>Enter your password to confirm</label>
               <input
                 type="password"
                 value={deletePassword}
                 onChange={e => setDeletePassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="Your current password"
                 className={inputCls}
                 autoFocus
               />

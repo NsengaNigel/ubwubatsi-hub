@@ -209,7 +209,7 @@ export default function ProfessionalDashboard() {
                 <span className="material-symbols-outlined fill" style={{ fontSize: '20px' }}>dashboard</span>
                 Dashboard
               </Link>
-              <Link to="/browse-professionals" className="sidebar-nav-item" onClick={() => setMobileNavOpen(false)}>
+              <Link to="/professional-dashboard" className="sidebar-nav-item" onClick={() => setMobileNavOpen(false)}>
                 <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>search</span>
                 Browse Projects
               </Link>
@@ -264,7 +264,7 @@ export default function ProfessionalDashboard() {
             <span className="material-symbols-outlined fill" style={{ fontSize: '20px' }}>dashboard</span>
             Dashboard
           </Link>
-          <Link to="/browse-professionals" className="sidebar-nav-item">
+          <Link to="/professional-dashboard" className="sidebar-nav-item">
             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>search</span>
             Browse Projects
           </Link>

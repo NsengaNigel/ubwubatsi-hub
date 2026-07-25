@@ -29,7 +29,7 @@ const sections = [
   },
   {
     title: '3. How We Use Your Information',
-    body: `We use your information solely to operate and improve the platform. Specifically: to create and authenticate your account; to connect clients with verified professionals; to enable project posting and expressions of interest; to send in-app notifications; to verify professional credentials against Rwanda Engineering and Architecture licensing bodies; and to generate anonymised platform statistics (total users, projects, and verifications). We do not use your data for advertising or sell it to third parties.`,
+    body: `We use your information solely to operate and improve the platform. Specifically: to create and authenticate your account; to connect clients with verified professionals; to enable project posting and expressions of interest; to send in-app notifications; to verify professional credentials against Rwanda Engineering and Architecture licensing bodies; and to generate anonymised platform statistics (total users, projects, and verifications). We do not use your data for advertising or sell it to third parties. We process personal data in accordance with Rwanda's Law N° 058/2021 relating to the protection of personal data and privacy.`,
   },
   {
     title: '4. Information Sharing & Disclosure',
@@ -52,7 +52,7 @@ const sections = [
     subsections: [
       {
         heading: 'Access & Correction',
-        text: 'You can view and update your profile information at any time through Account Settings.',
+        text: "Under Rwanda's Law N° 058/2021 relating to the protection of personal data and privacy, you have the right to access, correct, and request deletion of your personal data. You can view and update your profile information at any time through Account Settings.",
       },
       {
         heading: 'Account Deletion',

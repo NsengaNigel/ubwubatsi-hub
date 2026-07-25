@@ -121,7 +121,7 @@ export default function Navbar() {
     if (user.role === 'professional') return (
       <>
         {mobileNavLink('/professional-dashboard', 'My Profile', 'person')}
-        {mobileNavLink('/browse-professionals', 'Browse Projects', 'search')}
+        {mobileNavLink('/professional-dashboard', 'Browse Projects', 'search')}
         {mobileNavLink('/messages', 'Messages', 'chat')}
         {mobileNavLink('/professional-settings', 'Settings', 'settings')}
       </>
